@@ -186,6 +186,30 @@ async function createColorPreview(src, hex) {
       const targetAverage = (target.r + target.g + target.b) / 3;
       const imageData = context.getImageData(0, 0, width, height);
       const data = imageData.data;
+      const background = { r: 0, g: 0, b: 0, count: 0 };
+      const sampleStep = Math.max(1, Math.floor(Math.min(width, height) / 90));
+
+      for (let y = 0; y < height; y += sampleStep) {
+        for (let x = 0; x < width; x += sampleStep) {
+          const xRatio = x / width;
+          const yRatio = y / height;
+          const isEdge = xRatio < 0.05 || xRatio > 0.95 || yRatio < 0.05 || yRatio > 0.95;
+          if (!isEdge) continue;
+
+          const edgeIndex = (y * width + x) * 4;
+          if (data[edgeIndex + 3] < 10) continue;
+          background.r += data[edgeIndex];
+          background.g += data[edgeIndex + 1];
+          background.b += data[edgeIndex + 2];
+          background.count += 1;
+        }
+      }
+
+      if (background.count) {
+        background.r /= background.count;
+        background.g /= background.count;
+        background.b /= background.count;
+      }
 
       for (let index = 0; index < data.length; index += 4) {
         const pixelIndex = index / 4;
@@ -193,7 +217,10 @@ async function createColorPreview(src, hex) {
         const y = Math.floor(pixelIndex / width);
         const xRatio = x / width;
         const yRatio = y / height;
-        const inProductArea = xRatio > 0.08 && xRatio < 0.92 && yRatio > 0.11 && yRatio < 0.91;
+        const centerX = (xRatio - 0.5) / 0.36;
+        const centerY = (yRatio - 0.52) / 0.47;
+        const centerWeight = centerX * centerX + centerY * centerY;
+        const inProductArea = centerWeight < 1.05 && xRatio > 0.08 && xRatio < 0.92 && yRatio > 0.08 && yRatio < 0.94;
         if (!inProductArea || data[index + 3] < 10) continue;
 
         const red = data[index];
@@ -201,17 +228,23 @@ async function createColorPreview(src, hex) {
         const blue = data[index + 2];
         const max = Math.max(red, green, blue);
         const min = Math.min(red, green, blue);
-        const average = (red + green + blue) / 3;
-        const neutralDarkFabric = average < 96 && max - min < 44;
-        if (!neutralDarkFabric) continue;
+        const saturation = max - min;
+        const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+        const backgroundDistance = Math.hypot(red - background.r, green - background.g, blue - background.b);
+        const isGoldAccent = red > 125 && green > 82 && blue < 95 && red > blue + 42;
+        const isCleanHighlight = luminance > 245 && saturation < 16;
+        const likelyFabric = backgroundDistance > 24 || (centerWeight < 0.46 && luminance < 248);
+
+        if (!likelyFabric || isGoldAccent || isCleanHighlight) continue;
 
         const shade = targetAverage > 180
-          ? 0.68 + Math.min(average / 155, 0.34)
-          : 0.46 + Math.min(average / 135, 0.44);
+          ? 0.64 + Math.min(luminance / 255, 0.42)
+          : 0.36 + Math.min(luminance / 230, 0.52);
+        const blend = Math.min(0.92, Math.max(0.72, backgroundDistance / 84));
 
-        data[index] = Math.min(255, Math.round(target.r * shade));
-        data[index + 1] = Math.min(255, Math.round(target.g * shade));
-        data[index + 2] = Math.min(255, Math.round(target.b * shade));
+        data[index] = Math.min(255, Math.round(red * (1 - blend) + target.r * shade * blend));
+        data[index + 1] = Math.min(255, Math.round(green * (1 - blend) + target.g * shade * blend));
+        data[index + 2] = Math.min(255, Math.round(blue * (1 - blend) + target.b * shade * blend));
       }
 
       context.putImageData(imageData, 0, 0);
@@ -356,7 +389,7 @@ function renderProducts() {
       visual.style.setProperty("--selected-color", color.hex);
       visual.dataset.colorName = color.name;
 
-      if (!image || product.category !== "T-Shirts") return;
+      if (!image || !product.image) return;
       const requestId = ++previewRequestId;
       visual.classList.add("preview-loading");
       createColorPreview(product.image, color.hex).then((src) => {
