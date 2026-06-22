@@ -1,5 +1,9 @@
 const catalog = {
   "minimal-jul-tee": { name: "Minimal JUL Tee", price: 4.9 },
+  "signature-jul-tee": { name: "Signature JUL Tee", price: 5.5 },
+  "jul-crest-tee": { name: "JUL Crest Tee", price: 5.9 },
+  "kuwait-jul-tee": { name: "Kuwait JUL Tee", price: 5.25 },
+  "jul-monogram-tee": { name: "JUL Monogram Tee", price: 6 },
   "sand-linen-blazer": { name: "Sand Linen Blazer", price: 24.5 },
   "oxford-shirt": { name: "Oxford Shirt", price: 9.75 },
   "tailored-trouser": { name: "Tailored Trouser", price: 12.25 },
