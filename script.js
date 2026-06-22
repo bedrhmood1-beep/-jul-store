@@ -143,6 +143,86 @@ function variantKey(id, size, colorName) {
   return `${id}::${size}::${colorName}`;
 }
 
+function hexToRgb(hex) {
+  const value = String(hex || "").replace("#", "");
+  const normalized = value.length === 3
+    ? value.split("").map((char) => char + char).join("")
+    : value.padEnd(6, "0").slice(0, 6);
+  const number = Number.parseInt(normalized, 16);
+  return {
+    r: (number >> 16) & 255,
+    g: (number >> 8) & 255,
+    b: number & 255,
+  };
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+const colorPreviewCache = new Map();
+
+async function createColorPreview(src, hex) {
+  const cacheKey = `${src}::${hex}`;
+  if (colorPreviewCache.has(cacheKey)) return colorPreviewCache.get(cacheKey);
+
+  const previewPromise = loadImage(src)
+    .then((image) => {
+      const canvas = document.createElement("canvas");
+      const width = image.naturalWidth || image.width;
+      const height = image.naturalHeight || image.height;
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.drawImage(image, 0, 0, width, height);
+
+      const target = hexToRgb(hex);
+      const targetAverage = (target.r + target.g + target.b) / 3;
+      const imageData = context.getImageData(0, 0, width, height);
+      const data = imageData.data;
+
+      for (let index = 0; index < data.length; index += 4) {
+        const pixelIndex = index / 4;
+        const x = pixelIndex % width;
+        const y = Math.floor(pixelIndex / width);
+        const xRatio = x / width;
+        const yRatio = y / height;
+        const inProductArea = xRatio > 0.08 && xRatio < 0.92 && yRatio > 0.11 && yRatio < 0.91;
+        if (!inProductArea || data[index + 3] < 10) continue;
+
+        const red = data[index];
+        const green = data[index + 1];
+        const blue = data[index + 2];
+        const max = Math.max(red, green, blue);
+        const min = Math.min(red, green, blue);
+        const average = (red + green + blue) / 3;
+        const neutralDarkFabric = average < 96 && max - min < 44;
+        if (!neutralDarkFabric) continue;
+
+        const shade = targetAverage > 180
+          ? 0.68 + Math.min(average / 155, 0.34)
+          : 0.46 + Math.min(average / 135, 0.44);
+
+        data[index] = Math.min(255, Math.round(target.r * shade));
+        data[index + 1] = Math.min(255, Math.round(target.g * shade));
+        data[index + 2] = Math.min(255, Math.round(target.b * shade));
+      }
+
+      context.putImageData(imageData, 0, 0);
+      return canvas.toDataURL("image/png");
+    })
+    .catch(() => src);
+
+  colorPreviewCache.set(cacheKey, previewPromise);
+  return previewPromise;
+}
+
 function filteredProducts() {
   const normalizedSearch = searchTerm.trim().toLowerCase();
   return products.filter((product) => {
@@ -193,7 +273,7 @@ function renderCategories() {
   });
 }
 
-function createVariantControls(node, product) {
+function createVariantControls(node, product, onColorChange) {
   const panel = node.querySelector(".swatches");
   panel.className = "variant-panel";
   panel.innerHTML = "";
@@ -223,10 +303,13 @@ function createVariantControls(node, product) {
       <span class="color-dot" style="background:${color.hex}"></span>
       <span>${color.name}</span>
     `;
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       selectedColor = color;
       colorOptions.querySelectorAll(".color-choice").forEach((item) => item.classList.remove("active"));
       button.classList.add("active");
+      onColorChange(color);
     });
     colorOptions.append(button);
   });
@@ -251,14 +334,17 @@ function renderProducts() {
   filteredProducts().forEach((product) => {
     const node = productTemplate.content.firstElementChild.cloneNode(true);
     const visual = node.querySelector(".product-visual");
+    let image = null;
+    let previewRequestId = 0;
 
     visual.style.setProperty("--tone-a", product.tones[0]);
     visual.style.setProperty("--tone-b", product.tones[1]);
+    visual.dataset.colorName = product.colors[0]?.name || "";
 
     if (product.image) {
       visual.classList.add("has-image");
       visual.textContent = "";
-      const image = document.createElement("img");
+      image = document.createElement("img");
       image.src = product.image;
       image.alt = product.name;
       visual.append(image);
@@ -266,14 +352,29 @@ function renderProducts() {
       node.querySelector(".product-icon").textContent = product.icon;
     }
 
-    const controls = createVariantControls(node, product);
+    const updateProductColor = (color) => {
+      visual.style.setProperty("--selected-color", color.hex);
+      visual.dataset.colorName = color.name;
+
+      if (!image || product.category !== "T-Shirts") return;
+      const requestId = ++previewRequestId;
+      visual.classList.add("preview-loading");
+      createColorPreview(product.image, color.hex).then((src) => {
+        if (requestId !== previewRequestId) return;
+        image.src = src;
+        visual.classList.remove("preview-loading");
+      });
+    };
+
+    const controls = createVariantControls(node, product, updateProductColor);
+    updateProductColor(product.colors[0]);
 
     node.querySelector(".product-category").textContent = product.category;
     node.querySelector(".product-badge").textContent = product.badge;
     node.querySelector("h3").textContent = product.name;
     node.querySelector("p").textContent = product.description;
     node.querySelector("strong").textContent = formatPrice(product.price);
-    node.querySelector("button").addEventListener("click", () => addToCart(product.id, controls.getOptions()));
+    node.querySelector(".product-footer button").addEventListener("click", () => addToCart(product.id, controls.getOptions()));
 
     productsGrid.append(node);
   });
