@@ -404,6 +404,8 @@ h2 {
 }
 
 .product-visual {
+  position: relative;
+  overflow: hidden;
   min-height: 180px;
   display: grid;
   place-items: center;
@@ -411,6 +413,24 @@ h2 {
     radial-gradient(circle at 72% 24%, rgba(255, 255, 255, 0.82), transparent 22%),
     radial-gradient(circle at 28% 74%, rgba(255, 255, 255, 0.24), transparent 28%),
     linear-gradient(135deg, var(--tone-a), var(--tone-b));
+}
+
+.product-visual::after {
+  content: attr(data-color-name);
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  min-width: 58px;
+  border: 1px solid rgba(184, 138, 62, 0.26);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.86);
+  color: var(--navy);
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 900;
+  text-align: center;
+  backdrop-filter: blur(8px);
 }
 
 .product-visual.has-image {
@@ -423,6 +443,12 @@ h2 {
   height: 285px;
   object-fit: contain;
   background: #f4ead7;
+  transition: opacity 140ms ease, filter 140ms ease;
+}
+
+.product-visual.preview-loading img {
+  opacity: 0.68;
+  filter: saturate(0.9);
 }
 
 .product-icon {
