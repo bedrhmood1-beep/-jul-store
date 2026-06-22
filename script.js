@@ -472,20 +472,25 @@ function renderProducts() {
   filteredProducts().forEach((product) => {
     const node = productTemplate.content.firstElementChild.cloneNode(true);
     const visual = node.querySelector(".product-visual");
-    const mockup = document.createElement("div");
 
     visual.style.setProperty("--tone-a", product.tones[0]);
     visual.style.setProperty("--tone-b", product.tones[1]);
     visual.dataset.colorName = product.colors[0]?.name || "";
-    visual.classList.add("has-mockup");
-    visual.textContent = "";
-    mockup.className = "mockup-stage";
-    visual.append(mockup);
+
+    if (product.image) {
+      visual.classList.add("has-image");
+      visual.textContent = "";
+      const image = document.createElement("img");
+      image.src = product.image;
+      image.alt = product.name;
+      visual.append(image);
+    } else {
+      node.querySelector(".product-icon").textContent = product.icon;
+    }
 
     const updateProductColor = (color) => {
       visual.style.setProperty("--selected-color", color.hex);
       visual.dataset.colorName = color.name;
-      mockup.innerHTML = productMockupSvg(product, color);
     };
 
     const controls = createVariantControls(node, product, updateProductColor);
