@@ -51,6 +51,8 @@
     </header>
 
     <main id="top">
+      <section class="payment-status" id="paymentStatus" hidden></section>
+
       <section class="hero" aria-label="واجهة متجر JUL">
         <img src="assets/jul-store-hero-clean.png" alt="" />
         <div class="hero-overlay"></div>
@@ -114,6 +116,19 @@
         <a class="whatsapp-button" href="https://wa.me/96597827313" target="_blank" rel="noreferrer">
           استفسار واتساب
         </a>
+      </section>
+
+      <section class="policy-section" aria-label="سياسة التوصيل والاستبدال">
+        <div>
+          <p class="eyebrow">Delivery</p>
+          <h2>توصيل داخل الكويت</h2>
+          <p>رسوم التوصيل 1.500 د.ك وتضاف تلقائياً على الطلب. يتم التواصل مع العميل لتأكيد وقت التوصيل بعد الدفع.</p>
+        </div>
+        <div>
+          <p class="eyebrow">Exchange</p>
+          <h2>استبدال خلال 7 أيام</h2>
+          <p>الاستبدال متاح إذا القطعة غير مستخدمة وبحالتها الأصلية. المقاسات والألوان المختارة تظهر في الفاتورة.</p>
+        </div>
       </section>
     </main>
 
@@ -188,6 +203,16 @@
         </div>
         <p class="payment-note">الدفع يتم عبر بوابة دفع آمنة. لا يتم حفظ بيانات البطاقة داخل الموقع.</p>
 
+        <div class="cart-breakdown">
+          <div>
+            <span>المنتجات</span>
+            <strong id="cartSubtotal">0.000 د.ك</strong>
+          </div>
+          <div>
+            <span>توصيل الكويت</span>
+            <strong id="cartDelivery">0.000 د.ك</strong>
+          </div>
+        </div>
         <div class="cart-total">
           <span>الإجمالي</span>
           <strong id="cartTotal">0.000 د.ك</strong>

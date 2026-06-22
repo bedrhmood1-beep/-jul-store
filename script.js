@@ -1,5 +1,6 @@
 const merchantEmail = "bedrhmood1@gmail.com";
 const paymentEndpoint = "/api/create-payment";
+const deliveryFee = 1.5;
 
 const products = [
   {
@@ -12,7 +13,12 @@ const products = [
     price: 4.9,
     description: "تيشيرت أسود بتصميم JUL ذهبي بسيط وراقي.",
     tones: ["#111111", "#b88a3e"],
-    swatches: ["#111111", "#0d2338", "#f8f3e8"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: [
+      { name: "Black", hex: "#111111" },
+      { name: "Navy", hex: "#0d2338" },
+      { name: "Off White", hex: "#f8f3e8" },
+    ],
   },
   {
     id: "sand-linen-blazer",
@@ -24,7 +30,12 @@ const products = [
     price: 24.5,
     description: "بليزر لينن بلون رملي بقصة نظيفة للمناسبات والكاجوال الذكي.",
     tones: ["#d2b47f", "#0d2338"],
-    swatches: ["#d2b47f", "#f4ead7", "#0d2338"],
+    sizes: ["S", "M", "L", "XL"],
+    colors: [
+      { name: "Sand", hex: "#d2b47f" },
+      { name: "Off White", hex: "#f4ead7" },
+      { name: "Navy", hex: "#0d2338" },
+    ],
   },
   {
     id: "oxford-shirt",
@@ -36,7 +47,12 @@ const products = [
     price: 9.75,
     description: "قميص أوكسفورد عملي بألوان هادئة وملمس مريح لليوم الكامل.",
     tones: ["#f8f3e8", "#173653"],
-    swatches: ["#ffffff", "#c7d2df", "#173653"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: [
+      { name: "White", hex: "#ffffff" },
+      { name: "Blue", hex: "#c7d2df" },
+      { name: "Navy", hex: "#173653" },
+    ],
   },
   {
     id: "tailored-trouser",
@@ -48,7 +64,12 @@ const products = [
     price: 12.25,
     description: "بنطلون تفصيل بخطوط مرتبة يناسب القمصان والتيشيرتات.",
     tones: ["#0d2338", "#b88a3e"],
-    swatches: ["#0d2338", "#222222", "#d6d0c2"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: [
+      { name: "Navy", hex: "#0d2338" },
+      { name: "Black", hex: "#222222" },
+      { name: "Stone", hex: "#d6d0c2" },
+    ],
   },
   {
     id: "soft-knit-sweater",
@@ -60,7 +81,12 @@ const products = [
     price: 14.9,
     description: "سويتر ناعم وخفيف بتصميم بسيط مناسب للأجواء الباردة.",
     tones: ["#ece3d2", "#9b7a3c"],
-    swatches: ["#ece3d2", "#9b7a3c", "#071927"],
+    sizes: ["S", "M", "L", "XL"],
+    colors: [
+      { name: "Cream", hex: "#ece3d2" },
+      { name: "Camel", hex: "#9b7a3c" },
+      { name: "Navy", hex: "#071927" },
+    ],
   },
   {
     id: "cotton-shorts",
@@ -72,7 +98,12 @@ const products = [
     price: 7.5,
     description: "شورت قطن مريح بقصة مرتبة للمشاوير اليومية.",
     tones: ["#173653", "#f1d58b"],
-    swatches: ["#173653", "#d2b47f", "#f8f3e8"],
+    sizes: ["S", "M", "L", "XL"],
+    colors: [
+      { name: "Navy", hex: "#173653" },
+      { name: "Sand", hex: "#d2b47f" },
+      { name: "Off White", hex: "#f8f3e8" },
+    ],
   },
 ];
 
@@ -87,14 +118,21 @@ const cartPanel = document.querySelector("#cartPanel");
 const scrim = document.querySelector("#scrim");
 const cartItems = document.querySelector("#cartItems");
 const cartCount = document.querySelector("#cartCount");
+const cartSubtotal = document.querySelector("#cartSubtotal");
+const cartDelivery = document.querySelector("#cartDelivery");
 const cartTotal = document.querySelector("#cartTotal");
 const searchInput = document.querySelector("#searchInput");
 const checkoutForm = document.querySelector("#checkoutForm");
 const checkoutResult = document.querySelector("#checkoutResult");
 const checkoutButton = checkoutForm.querySelector('button[type="submit"]');
+const paymentStatus = document.querySelector("#paymentStatus");
 
 function formatPrice(value) {
   return `${Number(value).toFixed(3)} د.ك`;
+}
+
+function variantKey(id, size, colorName) {
+  return `${id}::${size}::${colorName}`;
 }
 
 function filteredProducts() {
@@ -104,6 +142,29 @@ function filteredProducts() {
     const text = `${product.name} ${product.category} ${product.description}`.toLowerCase();
     return byCategory && text.includes(normalizedSearch);
   });
+}
+
+function renderPaymentStatus() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get("payment");
+  const order = params.get("order");
+
+  if (!status || !paymentStatus) return;
+
+  paymentStatus.hidden = false;
+  paymentStatus.className = `payment-status ${status === "success" ? "success" : "failed"}`;
+
+  if (status === "success") {
+    paymentStatus.innerHTML = `
+      <strong>تم الرجوع من بوابة الدفع</strong>
+      <span>إذا اكتملت عملية الدفع، راح يظهر الطلب في لوحة MyFatoorah. رقم الطلب: ${order || "غير متوفر"}</span>
+    `;
+  } else {
+    paymentStatus.innerHTML = `
+      <strong>الدفع ما اكتمل</strong>
+      <span>تقدر ترجع للسلة وتجرب مرة ثانية، أو تتواصل واتساب للاستفسار. رقم الطلب: ${order || "غير متوفر"}</span>
+    `;
+  }
 }
 
 function renderCategories() {
@@ -122,6 +183,58 @@ function renderCategories() {
     });
     categoryFilters.append(button);
   });
+}
+
+function createVariantControls(node, product) {
+  const panel = node.querySelector(".swatches");
+  panel.className = "variant-panel";
+  panel.innerHTML = "";
+
+  const sizeRow = document.createElement("div");
+  sizeRow.className = "variant-row";
+  sizeRow.innerHTML = `
+    <label>المقاس</label>
+    <select class="size-select" aria-label="اختيار المقاس">
+      ${product.sizes.map((size) => `<option value="${size}">${size}</option>`).join("")}
+    </select>
+  `;
+
+  const colorRow = document.createElement("div");
+  colorRow.className = "variant-row";
+  colorRow.innerHTML = '<span class="variant-label">اللون</span>';
+
+  const colorOptions = document.createElement("div");
+  colorOptions.className = "color-options";
+  let selectedColor = product.colors[0];
+
+  product.colors.forEach((color, index) => {
+    const button = document.createElement("button");
+    button.className = `color-choice${index === 0 ? " active" : ""}`;
+    button.type = "button";
+    button.innerHTML = `
+      <span class="color-dot" style="background:${color.hex}"></span>
+      <span>${color.name}</span>
+    `;
+    button.addEventListener("click", () => {
+      selectedColor = color;
+      colorOptions.querySelectorAll(".color-choice").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+    });
+    colorOptions.append(button);
+  });
+
+  colorRow.append(colorOptions);
+  panel.append(sizeRow, colorRow);
+
+  return {
+    getOptions() {
+      return {
+        size: sizeRow.querySelector(".size-select").value,
+        colorName: selectedColor.name,
+        colorHex: selectedColor.hex,
+      };
+    },
+  };
 }
 
 function renderProducts() {
@@ -145,19 +258,14 @@ function renderProducts() {
       node.querySelector(".product-icon").textContent = product.icon;
     }
 
+    const controls = createVariantControls(node, product);
+
     node.querySelector(".product-category").textContent = product.category;
     node.querySelector(".product-badge").textContent = product.badge;
     node.querySelector("h3").textContent = product.name;
     node.querySelector("p").textContent = product.description;
     node.querySelector("strong").textContent = formatPrice(product.price);
-    node.querySelector("button").addEventListener("click", () => addToCart(product.id));
-
-    const swatches = node.querySelector(".swatches");
-    product.swatches.forEach((color) => {
-      const swatch = document.createElement("span");
-      swatch.style.backgroundColor = color;
-      swatches.append(swatch);
-    });
+    node.querySelector("button").addEventListener("click", () => addToCart(product.id, controls.getOptions()));
 
     productsGrid.append(node);
   });
@@ -167,43 +275,74 @@ function renderProducts() {
   }
 }
 
-function addToCart(id) {
-  cart.set(id, (cart.get(id) || 0) + 1);
+function addToCart(id, options) {
+  const product = products.find((item) => item.id === id);
+  if (!product) return;
+
+  const key = variantKey(id, options.size, options.colorName);
+  const existing = cart.get(key);
+
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.set(key, {
+      key,
+      id,
+      size: options.size,
+      color: options.colorName,
+      colorHex: options.colorHex,
+      quantity: 1,
+    });
+  }
+
   renderCart();
   openCart();
 }
 
-function changeQuantity(id, delta) {
-  const next = (cart.get(id) || 0) + delta;
-  if (next <= 0) {
-    cart.delete(id);
-  } else {
-    cart.set(id, next);
+function changeQuantity(key, delta) {
+  const item = cart.get(key);
+  if (!item) return;
+
+  item.quantity += delta;
+  if (item.quantity <= 0) {
+    cart.delete(key);
   }
+
   renderCart();
 }
 
 function cartSummary() {
-  return [...cart.entries()]
-    .map(([id, quantity]) => {
-      const product = products.find((item) => item.id === id);
+  return [...cart.values()]
+    .map((cartItem) => {
+      const product = products.find((item) => item.id === cartItem.id);
       if (!product) return null;
-      return { ...product, quantity, lineTotal: product.price * quantity };
+
+      return {
+        ...cartItem,
+        name: product.name,
+        category: product.category,
+        price: product.price,
+        lineTotal: product.price * cartItem.quantity,
+      };
     })
     .filter(Boolean);
 }
 
 function cartTotals() {
   const items = cartSummary();
-  const total = items.reduce((sum, item) => sum + item.lineTotal, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
+  const delivery = items.length ? deliveryFee : 0;
+  const total = subtotal + delivery;
   const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
-  return { items, total, quantity };
+  return { items, subtotal, delivery, total, quantity };
 }
 
 function renderCart() {
-  const { items, total, quantity } = cartTotals();
+  const { items, subtotal, delivery, total, quantity } = cartTotals();
 
   cartCount.textContent = quantity;
+  cartSubtotal.textContent = formatPrice(subtotal);
+  cartDelivery.textContent = formatPrice(delivery);
   cartTotal.textContent = formatPrice(total);
   cartItems.innerHTML = "";
 
@@ -218,6 +357,7 @@ function renderCart() {
     row.innerHTML = `
       <div>
         <strong>${item.name}</strong>
+        <small>المقاس: ${item.size} | اللون: ${item.color}</small>
         <div>${formatPrice(item.price)} × ${item.quantity}</div>
       </div>
       <div class="qty-controls" aria-label="تعديل كمية ${item.name}">
@@ -226,8 +366,8 @@ function renderCart() {
         <button type="button" data-action="plus">+</button>
       </div>
     `;
-    row.querySelector('[data-action="minus"]').addEventListener("click", () => changeQuantity(item.id, -1));
-    row.querySelector('[data-action="plus"]').addEventListener("click", () => changeQuantity(item.id, 1));
+    row.querySelector('[data-action="minus"]').addEventListener("click", () => changeQuantity(item.key, -1));
+    row.querySelector('[data-action="plus"]').addEventListener("click", () => changeQuantity(item.key, 1));
     cartItems.append(row);
   });
 }
@@ -245,7 +385,7 @@ function closeCart() {
 }
 
 function buildOrder(formData) {
-  const { items, total } = cartTotals();
+  const { items, subtotal, delivery, total } = cartTotals();
   return {
     id: `JUL-${Date.now().toString().slice(-6)}`,
     date: new Date().toISOString(),
@@ -261,6 +401,8 @@ function buildOrder(formData) {
     notes: formData.get("notes") || "",
     payment: formData.get("payment"),
     items,
+    subtotal,
+    delivery,
     total,
     merchantEmail,
   };
@@ -270,6 +412,8 @@ function showPaymentState(order, message) {
   checkoutResult.hidden = false;
   checkoutResult.innerHTML = `
     <strong>رقم الطلب: ${order.id}</strong>
+    <span>المنتجات: ${formatPrice(order.subtotal)}</span>
+    <span>التوصيل: ${formatPrice(order.delivery)}</span>
     <span>الإجمالي: ${formatPrice(order.total)}</span>
     <span>الدفع: ${order.payment}</span>
     <span>${message}</span>
@@ -327,6 +471,7 @@ checkoutForm.addEventListener("submit", async (event) => {
   }
 });
 
+renderPaymentStatus();
 renderCategories();
 renderProducts();
 renderCart();
