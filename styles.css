@@ -360,6 +360,35 @@ h2 {
   gap: 20px;
 }
 
+.service-band {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0 5vw 26px;
+  overflow: hidden;
+  border: 1px solid rgba(184, 138, 62, 0.2);
+  border-radius: 18px;
+  background: rgba(184, 138, 62, 0.22);
+}
+
+.service-band div {
+  display: grid;
+  gap: 7px;
+  min-height: 118px;
+  background: rgba(255, 250, 240, 0.92);
+  padding: 22px;
+}
+
+.service-band strong {
+  color: var(--navy);
+  font-size: 18px;
+}
+
+.service-band span {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
 .product-card {
   overflow: hidden;
   border: 1px solid rgba(184, 138, 62, 0.22);
@@ -385,14 +414,15 @@ h2 {
 }
 
 .product-visual.has-image {
-  min-height: 245px;
+  min-height: 285px;
   background: #efe3c6;
 }
 
 .product-visual.has-image img {
   width: 100%;
-  height: 245px;
-  object-fit: cover;
+  height: 285px;
+  object-fit: contain;
+  background: #f4ead7;
 }
 
 .product-icon {
@@ -622,6 +652,66 @@ h2 {
 
 .policy-section p:not(.eyebrow) {
   margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.size-table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(184, 138, 62, 0.2);
+  border-radius: 16px;
+  background: var(--white);
+}
+
+.size-guide table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+
+.size-guide th,
+.size-guide td {
+  border-bottom: 1px solid var(--line);
+  padding: 16px;
+  text-align: right;
+}
+
+.size-guide th {
+  color: var(--navy);
+  background: #fffaf0;
+  font-size: 13px;
+}
+
+.size-guide td {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.size-guide tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.faq-grid details {
+  border: 1px solid rgba(184, 138, 62, 0.2);
+  border-radius: 14px;
+  background: var(--white);
+  padding: 18px;
+}
+
+.faq-grid summary {
+  color: var(--navy);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.faq-grid p {
+  margin: 12px 0 0;
   color: var(--muted);
   line-height: 1.8;
 }
@@ -887,7 +977,9 @@ h2 {
 
   .status-strip,
   .toolbar,
-  .feature-band {
+  .feature-band,
+  .service-band,
+  .faq-grid {
     grid-template-columns: 1fr;
   }
 
