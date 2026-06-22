@@ -933,18 +933,35 @@ h2 {
     padding-inline: 14px;
   }
 
-  .brand-logo {
-    width: 68px;
-    height: 40px;
+  .brand {
+    gap: 0;
   }
 
-  .brand-logo svg {
-    width: 58px;
-    height: 30px;
+  .brand-logo {
+    display: none;
+  }
+
+  .brand strong {
+    font-size: 22px;
+    letter-spacing: 1.8px;
   }
 
   .brand small {
     display: none;
+  }
+
+  .icon-button {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  #cartCount {
+    top: -5px;
+    left: -5px;
+    min-width: 21px;
+    height: 21px;
+    font-size: 11px;
   }
 
   .section,
