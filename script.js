@@ -256,6 +256,111 @@ async function createColorPreview(src, hex) {
   return previewPromise;
 }
 
+function rgbToCss(rgb) {
+  return `rgb(${Math.round(rgb.r)}, ${Math.round(rgb.g)}, ${Math.round(rgb.b)})`;
+}
+
+function mixRgb(from, to, amount) {
+  return {
+    r: from.r + (to.r - from.r) * amount,
+    g: from.g + (to.g - from.g) * amount,
+    b: from.b + (to.b - from.b) * amount,
+  };
+}
+
+function productColorTone(hex) {
+  const base = hexToRgb(hex);
+  const luminance = 0.2126 * base.r + 0.7152 * base.g + 0.0722 * base.b;
+  const dark = { r: 7, g: 23, b: 35 };
+  const light = { r: 255, g: 250, b: 240 };
+  const gold = { r: 184, g: 138, b: 62 };
+
+  return {
+    base: rgbToCss(base),
+    shade: rgbToCss(mixRgb(base, dark, luminance > 170 ? 0.18 : 0.34)),
+    highlight: rgbToCss(mixRgb(base, light, luminance > 170 ? 0.28 : 0.16)),
+    ink: luminance > 178 ? "#0d2338" : "#fff8ea",
+    accent: rgbToCss(gold),
+    stitch: luminance > 178 ? "rgba(7, 23, 35, 0.42)" : "rgba(255, 250, 240, 0.58)",
+  };
+}
+
+function productMockupSvg(product, color) {
+  const tone = productColorTone(color.hex);
+  const style = `--garment:${tone.base};--garment-shade:${tone.shade};--garment-highlight:${tone.highlight};--mockup-ink:${tone.ink};--mockup-accent:${tone.accent};--mockup-stitch:${tone.stitch};`;
+  const julMark = '<text x="160" y="164" text-anchor="middle" fill="var(--mockup-accent)" font-size="34" font-weight="900" letter-spacing="8">JUL</text>';
+  let garment = "";
+
+  if (product.category === "T-Shirts") {
+    garment = `
+      <path d="M116 58h88l35 28 27 42-32 27-24-23v96H110v-96l-24 23-32-27 27-42z" fill="var(--garment)" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M137 58c7 18 39 18 46 0h21c-5 24-24 38-44 38s-39-14-44-38z" fill="var(--garment-shade)" opacity=".82"/>
+      <path d="M112 224h96" stroke="var(--mockup-stitch)" stroke-width="4" stroke-linecap="round"/>
+      ${julMark}
+    `;
+  } else if (product.category === "Blazers") {
+    garment = `
+      <path d="M105 62h110l31 178H74z" fill="var(--garment)" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M144 68h32l14 166h-60z" fill="#fbf4e6" opacity=".92"/>
+      <path d="M107 66l51 52-34 116H74z" fill="var(--garment-shade)" opacity=".9"/>
+      <path d="M213 66l-51 52 34 116h50z" fill="var(--garment-highlight)" opacity=".65"/>
+      <path d="M128 85l30 33-28 28M192 85l-30 33 28 28" fill="none" stroke="var(--mockup-stitch)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="160" cy="154" r="4" fill="var(--mockup-accent)"/>
+      <circle cx="160" cy="180" r="4" fill="var(--mockup-accent)"/>
+    `;
+  } else if (product.category === "Shirts") {
+    garment = `
+      <path d="M113 68h94l37 35v136H76V103z" fill="var(--garment)" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M132 68l28 30 28-30 22 18-28 43-22-29-22 29-28-43z" fill="var(--garment-highlight)" opacity=".82" stroke="var(--mockup-stitch)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M160 105v119" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="160" cy="133" r="4" fill="var(--mockup-accent)"/>
+      <circle cx="160" cy="162" r="4" fill="var(--mockup-accent)"/>
+      <circle cx="160" cy="191" r="4" fill="var(--mockup-accent)"/>
+      <path d="M88 130h41M191 130h41" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linecap="round"/>
+    `;
+  } else if (product.category === "Trousers") {
+    garment = `
+      <path d="M107 58h106l12 27-22 151h-52l-7-104-24 104H68L95 85z" fill="var(--garment)" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M96 58h128v28H96z" fill="var(--garment-shade)" stroke="var(--mockup-stitch)" stroke-width="3"/>
+      <path d="M160 88l-9 148M118 99l-17 116M199 99l-17 116" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linecap="round" opacity=".78"/>
+      <path d="M125 72h70" stroke="var(--mockup-accent)" stroke-width="4" stroke-linecap="round"/>
+    `;
+  } else if (product.category === "Sweaters") {
+    garment = `
+      <path d="M115 66h90l39 35 29 118-49 12-24-82v88H120v-88l-24 82-49-12 29-118z" fill="var(--garment)" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M137 66c5 18 41 18 46 0" fill="none" stroke="var(--mockup-stitch)" stroke-width="8" stroke-linecap="round"/>
+      <path d="M121 204h78M121 218h78M83 215l-33-8M237 215l33-8" stroke="var(--mockup-stitch)" stroke-width="4" stroke-linecap="round" opacity=".82"/>
+      <path d="M132 108h56" stroke="var(--garment-highlight)" stroke-width="5" stroke-linecap="round" opacity=".6"/>
+    `;
+  } else {
+    garment = `
+      <path d="M94 80h132v35l-22 110h-63l-12-64-17 64H49L71 115z" fill="var(--garment)" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M85 76h150v32H85z" fill="var(--garment-shade)" stroke="var(--mockup-stitch)" stroke-width="3"/>
+      <path d="M160 110l-18 113M116 125l-13 75M204 125l-13 75" stroke="var(--mockup-stitch)" stroke-width="3" stroke-linecap="round" opacity=".78"/>
+      <path d="M141 93c8 10 30 10 38 0" fill="none" stroke="var(--mockup-accent)" stroke-width="4" stroke-linecap="round"/>
+    `;
+  }
+
+  return `
+    <svg class="product-mockup" viewBox="0 0 320 285" role="img" aria-label="${product.name}" style="${style}">
+      <rect x="0" y="0" width="320" height="285" rx="0" fill="#f6eddd"/>
+      <path d="M0 0h320v285H0z" fill="url(#softWash)" opacity=".9"/>
+      <defs>
+        <linearGradient id="softWash" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stop-color="#fffaf0"/>
+          <stop offset=".55" stop-color="#efe0c6"/>
+          <stop offset="1" stop-color="#f9f2e7"/>
+        </linearGradient>
+      </defs>
+      <rect x="18" y="0" width="12" height="285" fill="#0d2338" opacity=".9"/>
+      <rect x="290" y="0" width="12" height="285" fill="#0d2338" opacity=".9"/>
+      <path d="M36 235c74-54 151-96 246-126" fill="none" stroke="var(--mockup-accent)" stroke-width="5" stroke-linecap="round" opacity=".58"/>
+      <ellipse cx="160" cy="151" rx="112" ry="118" fill="#fffaf0" opacity=".68"/>
+      <g class="mockup-garment">${garment}</g>
+    </svg>
+  `;
+}
+
 function filteredProducts() {
   const normalizedSearch = searchTerm.trim().toLowerCase();
   return products.filter((product) => {
@@ -367,36 +472,20 @@ function renderProducts() {
   filteredProducts().forEach((product) => {
     const node = productTemplate.content.firstElementChild.cloneNode(true);
     const visual = node.querySelector(".product-visual");
-    let image = null;
-    let previewRequestId = 0;
+    const mockup = document.createElement("div");
 
     visual.style.setProperty("--tone-a", product.tones[0]);
     visual.style.setProperty("--tone-b", product.tones[1]);
     visual.dataset.colorName = product.colors[0]?.name || "";
-
-    if (product.image) {
-      visual.classList.add("has-image");
-      visual.textContent = "";
-      image = document.createElement("img");
-      image.src = product.image;
-      image.alt = product.name;
-      visual.append(image);
-    } else {
-      node.querySelector(".product-icon").textContent = product.icon;
-    }
+    visual.classList.add("has-mockup");
+    visual.textContent = "";
+    mockup.className = "mockup-stage";
+    visual.append(mockup);
 
     const updateProductColor = (color) => {
       visual.style.setProperty("--selected-color", color.hex);
       visual.dataset.colorName = color.name;
-
-      if (!image || !product.image) return;
-      const requestId = ++previewRequestId;
-      visual.classList.add("preview-loading");
-      createColorPreview(product.image, color.hex).then((src) => {
-        if (requestId !== previewRequestId) return;
-        image.src = src;
-        visual.classList.remove("preview-loading");
-      });
+      mockup.innerHTML = productMockupSvg(product, color);
     };
 
     const controls = createVariantControls(node, product, updateProductColor);
