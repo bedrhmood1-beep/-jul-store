@@ -24,6 +24,11 @@ function getBaseUrl(req) {
   return host ? `${proto}://${host}` : "";
 }
 
+function deliveryFee() {
+  const value = Number.parseFloat(process.env.DELIVERY_FEE_KWD || "1.5");
+  return Number.isFinite(value) && value >= 0 ? Number(value.toFixed(3)) : 1.5;
+}
+
 function buildInvoice(order) {
   const items = Array.isArray(order.items) ? order.items : [];
   let invoiceValue = 0;
@@ -35,9 +40,15 @@ function buildInvoice(order) {
       throw new Error("Invalid cart item.");
     }
 
+    const size = String(item.size || "").trim();
+    const color = String(item.color || "").trim();
+    if (!size || !color) {
+      throw new Error("Size and color are required.");
+    }
+
     invoiceValue += product.price * quantity;
     return {
-      ItemName: product.name,
+      ItemName: `${product.name} - Size ${size} - ${color}`,
       Quantity: quantity,
       UnitPrice: Number(product.price.toFixed(3)),
     };
@@ -47,7 +58,41 @@ function buildInvoice(order) {
     throw new Error("Cart is empty.");
   }
 
-  return { invoiceValue: Number(invoiceValue.toFixed(3)), invoiceItems };
+  const delivery = deliveryFee();
+  if (delivery > 0) {
+    invoiceValue += delivery;
+    invoiceItems.push({
+      ItemName: "Kuwait Delivery",
+      Quantity: 1,
+      UnitPrice: delivery,
+    });
+  }
+
+  return {
+    delivery,
+    invoiceValue: Number(invoiceValue.toFixed(3)),
+    invoiceItems,
+  };
+}
+
+async function notifyOrderWebhook(order, payment) {
+  const webhookUrl = process.env.ORDER_WEBHOOK_URL;
+  if (!webhookUrl) return;
+
+  try {
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...order,
+        paymentMethod: order.payment,
+        myfatoorah: payment,
+        source: "jul-store",
+      }),
+    });
+  } catch {
+    // Payment should not fail only because the optional order webhook is down.
+  }
 }
 
 export default async function handler(req, res) {
@@ -66,9 +111,13 @@ export default async function handler(req, res) {
 
   try {
     const order = req.body || {};
-    const { invoiceValue, invoiceItems } = buildInvoice(order);
+    const { delivery, invoiceValue, invoiceItems } = buildInvoice(order);
     const siteUrl = getBaseUrl(req);
     const address = order.address || {};
+    const itemSummary = invoiceItems
+      .filter((item) => item.ItemName !== "Kuwait Delivery")
+      .map((item) => `${item.ItemName} x${item.Quantity}`)
+      .join(" | ");
 
     const payload = {
       PaymentMethodId: paymentMethodId(order.payment),
@@ -79,12 +128,15 @@ export default async function handler(req, res) {
       InvoiceValue: invoiceValue,
       Language: "AR",
       CustomerReference: String(order.id || Date.now()),
+      UserDefinedField: itemSummary.slice(0, 500),
       CustomerAddress: {
         Block: String(address.block || ""),
         Street: String(address.street || ""),
         HouseBuildingNo: String(address.house || ""),
         Address: String(address.area || ""),
-        AddressInstructions: [address.floor, order.notes].filter(Boolean).join(" - "),
+        AddressInstructions: [address.floor, order.notes, `Delivery ${delivery.toFixed(3)} KWD`]
+          .filter(Boolean)
+          .join(" - "),
       },
       InvoiceItems: invoiceItems,
     };
@@ -114,12 +166,19 @@ export default async function handler(req, res) {
       return;
     }
 
-    res.status(200).json({
-      ok: true,
+    const payment = {
       orderId: payload.CustomerReference,
       invoiceId: data.Data.InvoiceId,
       total: invoiceValue,
+      delivery,
       paymentUrl: data.Data.PaymentURL,
+    };
+
+    await notifyOrderWebhook(order, payment);
+
+    res.status(200).json({
+      ok: true,
+      ...payment,
     });
   } catch (error) {
     res.status(400).json({ ok: false, message: error.message || "Invalid payment request." });
