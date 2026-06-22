@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 110" role="img" aria-label="JUL">
+  <defs>
+    <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f1d58b"/>
+      <stop offset="0.48" stop-color="#b88a3e"/>
+      <stop offset="1" stop-color="#7a5722"/>
+    </linearGradient>
+    <linearGradient id="navy" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#173653"/>
+      <stop offset="1" stop-color="#071927"/>
+    </linearGradient>
+  </defs>
+  <rect width="220" height="110" rx="22" fill="#f8f3e8"/>
+  <path d="M45 76C81 70 119 51 176 20" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>
+  <text x="110" y="78" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="58" font-weight="900" fill="url(#navy)" letter-spacing="3">JUL</text>
+</svg>

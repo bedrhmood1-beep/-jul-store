@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JUL Modern Clothing | متجر ملابس في الكويت</title>
+    <meta
+      name="description"
+      content="JUL Modern Clothing متجر ملابس حديث في الكويت مع طلب ودفع إلكتروني داخل الموقع."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="JUL Modern Clothing">
+        <span class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 220 110" role="img" aria-label="JUL">
+            <defs>
+              <linearGradient id="brandGold" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0" stop-color="#f1d58b" />
+                <stop offset="0.48" stop-color="#b88a3e" />
+                <stop offset="1" stop-color="#7a5722" />
+              </linearGradient>
+              <linearGradient id="brandNavy" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0" stop-color="#173653" />
+                <stop offset="1" stop-color="#071927" />
+              </linearGradient>
+            </defs>
+            <path class="logo-swoosh" d="M45 76C81 70 119 51 176 20" />
+            <text x="110" y="78" text-anchor="middle">JUL</text>
+          </svg>
+        </span>
+        <span>
+          <strong>JUL</strong>
+          <small>Modern Clothing</small>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="التنقل الرئيسي">
+        <a href="#products">Shop</a>
+        <a href="#categories">Categories</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="icon-button cart-toggle" type="button" aria-label="فتح السلة">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6h15l-1.5 8.5H8L6 3H3" />
+          <circle cx="9" cy="20" r="1.5" />
+          <circle cx="18" cy="20" r="1.5" />
+        </svg>
+        <span id="cartCount">0</span>
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-label="واجهة متجر JUL">
+        <img src="assets/jul-store-hero-clean.png" alt="" />
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="eyebrow">KUWAIT</p>
+          <h1>JUL Modern Clothing</h1>
+          <p>
+            تشكيلة ملابس رجالية حديثة بتصميم نظيف وألوان فخمة. اختر القطعة،
+            أضفها للسلة، وأكمل العنوان والدفع من داخل الموقع.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#products">Shop Now</a>
+            <a class="secondary-button" href="https://wa.me/96597827313" target="_blank" rel="noreferrer">
+              استفسار واتساب
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="status-strip" id="categories" aria-label="تصنيفات المتجر">
+        <div>
+          <strong>New Arrivals</strong>
+          <span>قطع جديدة للموسم</span>
+        </div>
+        <div>
+          <strong>T-Shirts</strong>
+          <span>تصاميم JUL اليومية</span>
+        </div>
+        <div>
+          <strong>Secure Payment</strong>
+          <span>دفع إلكتروني داخل الموقع</span>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="أدوات البحث والفلترة">
+        <label class="search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <input id="searchInput" type="search" placeholder="Search products" />
+        </label>
+        <div class="chips" id="categoryFilters" aria-label="تصنيف المنتجات"></div>
+      </section>
+
+      <section class="section" id="products">
+        <div class="section-head">
+          <p class="eyebrow">Product Listing</p>
+          <h2>تسوق مجموعة JUL</h2>
+        </div>
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <section class="contact-section" id="contact">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2>للاستفسار فقط</h2>
+          <p>Email: <a href="mailto:bedrhmood1@gmail.com">bedrhmood1@gmail.com</a></p>
+          <p>Phone: <a href="tel:+96597827313">97827313</a></p>
+        </div>
+        <a class="whatsapp-button" href="https://wa.me/96597827313" target="_blank" rel="noreferrer">
+          استفسار واتساب
+        </a>
+      </section>
+    </main>
+
+    <aside class="cart-panel" id="cartPanel" aria-label="سلة الشراء" aria-hidden="true">
+      <div class="cart-header">
+        <div>
+          <p class="eyebrow">Checkout</p>
+          <h2>السلة والدفع</h2>
+        </div>
+        <button class="icon-button cart-close" type="button" aria-label="إغلاق السلة">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <form class="checkout-form" id="checkoutForm">
+        <div class="checkout-section-title">بيانات العميل</div>
+        <label>
+          الاسم
+          <input name="customer" required placeholder="اسم العميل" />
+        </label>
+        <label>
+          رقم الهاتف
+          <input name="mobile" required inputmode="tel" placeholder="مثال: 97827313" />
+        </label>
+
+        <div class="checkout-section-title">عنوان التوصيل</div>
+        <label>
+          المنطقة
+          <input name="area" required placeholder="مثال: السالمية" />
+        </label>
+        <div class="address-grid">
+          <label>
+            القطعة
+            <input name="block" required placeholder="مثال: 4" />
+          </label>
+          <label>
+            الشارع
+            <input name="street" required placeholder="مثال: شارع 12" />
+          </label>
+        </div>
+        <div class="address-grid">
+          <label>
+            المنزل
+            <input name="house" required placeholder="مثال: 25" />
+          </label>
+          <label>
+            الدور / الشقة
+            <input name="floor" placeholder="اختياري" />
+          </label>
+        </div>
+        <label>
+          ملاحظات الطلب
+          <textarea name="notes" rows="3" placeholder="المقاس، اللون، وقت التوصيل"></textarea>
+        </label>
+
+        <div class="checkout-section-title">طريقة الدفع</div>
+        <div class="payment-methods" role="radiogroup" aria-label="طريقة الدفع">
+          <label class="payment-option">
+            <input type="radio" name="payment" value="KNET" checked />
+            <span>KNET</span>
+          </label>
+          <label class="payment-option">
+            <input type="radio" name="payment" value="Visa / MasterCard" />
+            <span>Visa / MasterCard</span>
+          </label>
+          <label class="payment-option">
+            <input type="radio" name="payment" value="Apple Pay" />
+            <span>Apple Pay</span>
+          </label>
+        </div>
+        <p class="payment-note">الدفع يتم عبر بوابة دفع آمنة. لا يتم حفظ بيانات البطاقة داخل الموقع.</p>
+
+        <div class="cart-total">
+          <span>الإجمالي</span>
+          <strong id="cartTotal">0.000 د.ك</strong>
+        </div>
+        <button class="primary-button full" type="submit">متابعة للدفع</button>
+        <div class="checkout-result" id="checkoutResult" hidden></div>
+      </form>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <template id="productTemplate">
+      <article class="product-card">
+        <div class="product-visual">
+          <span class="product-icon"></span>
+        </div>
+        <div class="product-body">
+          <div class="product-meta">
+            <span class="product-category"></span>
+            <span class="product-badge"></span>
+          </div>
+          <h3></h3>
+          <p></p>
+          <div class="swatches" aria-label="ألوان المنتج"></div>
+          <div class="product-footer">
+            <strong></strong>
+            <button type="button">Add to Cart</button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
