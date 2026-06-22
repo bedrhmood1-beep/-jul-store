@@ -438,12 +438,32 @@ h2 {
   background: #efe3c6;
 }
 
+.product-visual.has-mockup {
+  min-height: 285px;
+  background: #f6eddd;
+}
+
 .product-visual.has-image img {
   width: 100%;
   height: 285px;
   object-fit: contain;
   background: #f4ead7;
   transition: opacity 140ms ease, filter 140ms ease;
+}
+
+.mockup-stage,
+.product-mockup {
+  display: block;
+  width: 100%;
+  height: 285px;
+}
+
+.product-mockup {
+  filter: drop-shadow(0 18px 18px rgba(7, 23, 35, 0.15));
+}
+
+.mockup-garment {
+  transform-origin: 160px 150px;
 }
 
 .product-visual.preview-loading img {
@@ -605,9 +625,11 @@ h2 {
 }
 
 .product-footer button {
+  min-width: 134px;
   min-height: 42px;
   background: var(--navy);
   color: var(--white);
+  white-space: nowrap;
 }
 
 .feature-band {
