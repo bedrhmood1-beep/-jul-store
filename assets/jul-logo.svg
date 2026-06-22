@@ -1,16 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 110" role="img" aria-label="JUL">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 150" role="img" aria-label="JUL">
   <defs>
-    <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#f1d58b"/>
-      <stop offset="0.48" stop-color="#b88a3e"/>
+    <linearGradient id="jul-navy" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#173a58"/>
+      <stop offset="1" stop-color="#071723"/>
+    </linearGradient>
+    <linearGradient id="jul-gold" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f2d789"/>
+      <stop offset="0.52" stop-color="#b88a3e"/>
       <stop offset="1" stop-color="#7a5722"/>
     </linearGradient>
-    <linearGradient id="navy" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#173653"/>
-      <stop offset="1" stop-color="#071927"/>
-    </linearGradient>
+    <filter id="soft-shadow" x="-10%" y="-20%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#071723" flood-opacity="0.18"/>
+    </filter>
   </defs>
-  <rect width="220" height="110" rx="22" fill="#f8f3e8"/>
-  <path d="M45 76C81 70 119 51 176 20" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>
-  <text x="110" y="78" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="58" font-weight="900" fill="url(#navy)" letter-spacing="3">JUL</text>
+  <g filter="url(#soft-shadow)">
+    <path d="M82 103c22 18 58 13 58-27V32h-34v43c0 17-11 22-25 10L60 112c7 8 15 11 22 11z" fill="url(#jul-navy)"/>
+    <path d="M158 32h35v55c0 16 9 25 25 25s25-9 25-25V32h35v56c0 35-23 57-60 57s-60-22-60-57V32z" fill="url(#jul-navy)"/>
+    <path d="M301 32h35v80h67v31H301V32z" fill="url(#jul-navy)"/>
+    <path d="M64 112C134 99 222 67 346 17" fill="none" stroke="url(#jul-gold)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M220 125c38-12 76-32 112-60" fill="none" stroke="url(#jul-gold)" stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+  </g>
 </svg>
