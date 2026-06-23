@@ -101,7 +101,7 @@
       "name": "Half-Zip Pullover",
       "price": 12.9,
       "active": true,
-      "details": ["ياقة نص زب.", "خامة دافئة وخفيفة.", "مناسب للدوام والطلعات."],
+      "details": ["ياقة نصف سحاب.", "خامة دافئة وخفيفة.", "مناسب للدوام والطلعات."],
       "stock": { "default": 5, "low": ["XL::Charcoal"], "soldOut": [] }
     }
   ]
