@@ -2,12 +2,19 @@ import fs from "node:fs";
 import path from "node:path";
 
 const baseCatalog = {
-  "minimal-jul-tee": { name: "Minimal JUL Tee", price: 4.9 },
-  "sand-linen-blazer": { name: "Sand Linen Blazer", price: 24.5 },
-  "oxford-shirt": { name: "Oxford Shirt", price: 9.75 },
-  "tailored-trouser": { name: "Tailored Trouser", price: 12.25 },
-  "soft-knit-sweater": { name: "Soft Knit Sweater", price: 14.9 },
-  "cotton-shorts": { name: "Cotton Shorts", price: 7.5 },
+  "beach-tee-men": { name: "Men Beach Tee", price: 5.25 },
+  "beach-shorts-men": { name: "Men Beach Shorts", price: 6.75 },
+  "beach-tee-women": { name: "Women Beach Tee", price: 5.25 },
+  "beach-shorts-women": { name: "Women Beach Shorts", price: 6.5 },
+  "summer-oversized-tee": { name: "Summer Oversized Tee", price: 5.9 },
+  "summer-shorts-men": { name: "Men Summer Shorts", price: 6.25 },
+  "rib-tank-top-women": { name: "Women Rib Tank Top", price: 4.25 },
+  "lounge-shorts-women": { name: "Women Lounge Shorts", price: 5.75 },
+  "washed-oversized-tee": { name: "Washed Oversized Tee", price: 6.9 },
+  "heavy-logo-hoodie": { name: "Heavy Logo Hoodie", price: 14.9 },
+  "timeless-logo-tee": { name: "Timeless Logo Tee", price: 5.9 },
+  "relaxed-logo-hoodie": { name: "Relaxed Logo Hoodie", price: 13.9 },
+  "half-zip-pullover": { name: "Half-Zip Pullover", price: 12.9 },
 };
 
 function catalogFromConfig() {

@@ -1,46 +1,108 @@
 {
   "products": [
     {
-      "id": "minimal-jul-tee",
-      "price": 4.9,
+      "id": "beach-tee-men",
+      "name": "Men Beach Tee",
+      "price": 5.25,
       "active": true,
-      "details": ["قطن ناعم للاستخدام اليومي.", "قصة مستقيمة.", "طباعة JUL ذهبية بسيطة."],
-      "stock": { "default": 6, "low": ["XL::Navy"], "soldOut": ["XXL::Off White"] }
+      "details": ["حماية مناسبة للشمس للبس اليومي.", "قطن خفيف وقابل للتنفس.", "تطريز JUL صغير على الصدر."],
+      "stock": { "default": 8, "low": ["XXL::Navy"], "soldOut": [] }
     },
     {
-      "id": "sand-linen-blazer",
-      "price": 24.5,
+      "id": "beach-shorts-men",
+      "name": "Men Beach Shorts",
+      "price": 6.75,
       "active": true,
-      "details": ["لينن خفيف.", "مناسب للمناسبات والكاجوال الذكي.", "قصة نظيفة ومرتبة."],
-      "stock": { "default": 4, "low": ["XL::Navy"], "soldOut": ["S::Off White"] }
+      "details": ["سريع الجفاف.", "خصر مرن ورباط أمامي.", "مناسب للبحر والسفر."],
+      "stock": { "default": 7, "low": ["XL::Sky Blue"], "soldOut": [] }
     },
     {
-      "id": "oxford-shirt",
-      "price": 9.75,
+      "id": "beach-tee-women",
+      "name": "Women Beach Tee",
+      "price": 5.25,
       "active": true,
-      "details": ["قماش أوكسفورد عملي.", "يناسب الدوام والطلعات.", "يغسل بماء بارد."],
-      "stock": { "default": 5, "low": ["XXL::Navy"], "soldOut": [] }
+      "details": ["قصة خفيفة ومريحة.", "مناسب للبحر والمشاوير.", "تطريز JUL نظيف."],
+      "stock": { "default": 8, "low": ["XL::Sand"], "soldOut": [] }
     },
     {
-      "id": "tailored-trouser",
-      "price": 12.25,
+      "id": "beach-shorts-women",
+      "name": "Women Beach Shorts",
+      "price": 6.5,
       "active": true,
-      "details": ["قصة تفصيل مرتبة.", "خصر مريح.", "مناسب مع القمصان والتيشيرتات."],
-      "stock": { "default": 5, "low": ["S::Stone"], "soldOut": ["XXL::Stone"] }
+      "details": ["قماش ناعم وخفيف.", "خصر مرن.", "طول عملي للطلعات الصيفية."],
+      "stock": { "default": 7, "low": ["XS::Sky Blue"], "soldOut": [] }
     },
     {
-      "id": "soft-knit-sweater",
+      "id": "summer-oversized-tee",
+      "name": "Summer Oversized Tee",
+      "price": 5.9,
+      "active": true,
+      "details": ["قصة أوفرسايز.", "قطن ممتاز.", "مناسب للصيف واللبس اليومي."],
+      "stock": { "default": 8, "low": ["XXL::Black"], "soldOut": [] }
+    },
+    {
+      "id": "summer-shorts-men",
+      "name": "Men Summer Shorts",
+      "price": 6.25,
+      "active": true,
+      "details": ["ملمس ناعم.", "قصة مريحة.", "رباط عملي للخصر."],
+      "stock": { "default": 7, "low": ["XL::White"], "soldOut": [] }
+    },
+    {
+      "id": "rib-tank-top-women",
+      "name": "Women Rib Tank Top",
+      "price": 4.25,
+      "active": true,
+      "details": ["خفيف ومريح.", "قصة مناسبة للحر.", "يناسب الشورتات اليومية."],
+      "stock": { "default": 6, "low": ["XS::Black"], "soldOut": [] }
+    },
+    {
+      "id": "lounge-shorts-women",
+      "name": "Women Lounge Shorts",
+      "price": 5.75,
+      "active": true,
+      "details": ["ناعم للبس اليومي.", "خصر مرن.", "ألوان هادئة وسهلة التنسيق."],
+      "stock": { "default": 7, "low": ["XL::Bone"], "soldOut": [] }
+    },
+    {
+      "id": "washed-oversized-tee",
+      "name": "Washed Oversized Tee",
+      "price": 6.9,
+      "active": true,
+      "details": ["ملمس مغسول.", "تطريز أمامي وخلفي.", "قصة واسعة ومريحة."],
+      "stock": { "default": 6, "low": ["XXL::Bone"], "soldOut": [] }
+    },
+    {
+      "id": "heavy-logo-hoodie",
+      "name": "Heavy Logo Hoodie",
       "price": 14.9,
       "active": true,
-      "details": ["نسيج ناعم وخفيف.", "مناسب للأجواء الباردة.", "غسيل بارد للحفاظ على الخامة."],
-      "stock": { "default": 4, "low": ["XL::Navy"], "soldOut": [] }
+      "details": ["قماش ثقيل ودافئ.", "جيب أمامي.", "تطريز JUL خلفي."],
+      "stock": { "default": 5, "low": ["XL::Charcoal"], "soldOut": [] }
     },
     {
-      "id": "cotton-shorts",
-      "price": 7.5,
+      "id": "timeless-logo-tee",
+      "name": "Timeless Logo Tee",
+      "price": 5.9,
       "active": true,
-      "details": ["قطن مريح.", "خصر مرن.", "قصة يومية سهلة التنسيق."],
-      "stock": { "default": 6, "low": ["XL::Off White"], "soldOut": ["S::Off White"] }
+      "details": ["تصميم بسيط.", "يناسب كل يوم.", "تطريز JUL أمامي وخلفي."],
+      "stock": { "default": 8, "low": ["XXL::Taupe"], "soldOut": [] }
+    },
+    {
+      "id": "relaxed-logo-hoodie",
+      "name": "Relaxed Logo Hoodie",
+      "price": 13.9,
+      "active": true,
+      "details": ["قصة مريحة.", "خامة ناعمة.", "شعار JUL مطرز."],
+      "stock": { "default": 5, "low": ["XL::Bone"], "soldOut": [] }
+    },
+    {
+      "id": "half-zip-pullover",
+      "name": "Half-Zip Pullover",
+      "price": 12.9,
+      "active": true,
+      "details": ["ياقة نص زب.", "خامة دافئة وخفيفة.", "مناسب للدوام والطلعات."],
+      "stock": { "default": 5, "low": ["XL::Charcoal"], "soldOut": [] }
     }
   ]
 }
