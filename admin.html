@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JUL Admin | إدارة المنتجات</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body { background: var(--paper); }
+      .admin-shell { max-width: 1180px; margin: 0 auto; padding: 34px 5vw 72px; }
+      .admin-head { display: flex; justify-content: space-between; gap: 18px; align-items: center; margin-bottom: 22px; }
+      .admin-grid { display: grid; gap: 16px; }
+      .admin-card { border: 1px solid rgba(184, 138, 62, .22); border-radius: 16px; background: var(--white); padding: 18px; box-shadow: 0 12px 30px rgba(7,23,35,.06); }
+      .admin-form { display: grid; grid-template-columns: 1.2fr .5fr .5fr .7fr 1fr 1fr; gap: 12px; align-items: end; }
+      .admin-form label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; font-weight: 900; }
+      .admin-form input, .admin-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 10px; color: var(--ink); }
+      .admin-form textarea { min-height: 88px; resize: vertical; }
+      .admin-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+      .admin-output { width: 100%; min-height: 260px; border: 1px solid var(--line); border-radius: 14px; padding: 14px; direction: ltr; text-align: left; font-family: Consolas, monospace; }
+      .admin-note { color: var(--muted); line-height: 1.8; }
+      .admin-head .secondary-button, .admin-actions .secondary-button { color: var(--navy); border-color: rgba(184, 138, 62, .32); background: var(--white); }
+      @media (max-width: 900px) { .admin-form { grid-template-columns: 1fr; } .admin-head { align-items: flex-start; flex-direction: column; } }
+    </style>
+  </head>
+  <body>
+    <main class="admin-shell">
+      <div class="admin-head">
+        <div>
+          <p class="eyebrow">JUL Admin</p>
+          <h1>إدارة المنتجات</h1>
+          <p class="admin-note">عدل السعر، التوفر، والمخزون. بعد التعديل اضغط تحميل ملف المنتجات وارفع `products.json` في GitHub.</p>
+        </div>
+        <a class="secondary-button" href="/">رجوع للمتجر</a>
+      </div>
+
+      <div class="admin-actions">
+        <button class="primary-button" id="downloadConfig" type="button">تحميل products.json</button>
+        <button class="secondary-button" id="copyConfig" type="button">نسخ JSON</button>
+      </div>
+
+      <section class="admin-grid" id="adminProducts"></section>
+
+      <h2>الملف الجاهز</h2>
+      <textarea class="admin-output" id="adminOutput" spellcheck="false"></textarea>
+    </main>
+    <script src="admin.js"></script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+{
+  "products": [
+    {
+      "id": "minimal-jul-tee",
+      "price": 4.9,
+      "active": true,
+      "details": ["قطن ناعم للاستخدام اليومي.", "قصة مستقيمة.", "طباعة JUL ذهبية بسيطة."],
+      "stock": { "default": 6, "low": ["XL::Navy"], "soldOut": ["XXL::Off White"] }
+    },
+    {
+      "id": "sand-linen-blazer",
+      "price": 24.5,
+      "active": true,
+      "details": ["لينن خفيف.", "مناسب للمناسبات والكاجوال الذكي.", "قصة نظيفة ومرتبة."],
+      "stock": { "default": 4, "low": ["XL::Navy"], "soldOut": ["S::Off White"] }
+    },
+    {
+      "id": "oxford-shirt",
+      "price": 9.75,
+      "active": true,
+      "details": ["قماش أوكسفورد عملي.", "يناسب الدوام والطلعات.", "يغسل بماء بارد."],
+      "stock": { "default": 5, "low": ["XXL::Navy"], "soldOut": [] }
+    },
+    {
+      "id": "tailored-trouser",
+      "price": 12.25,
+      "active": true,
+      "details": ["قصة تفصيل مرتبة.", "خصر مريح.", "مناسب مع القمصان والتيشيرتات."],
+      "stock": { "default": 5, "low": ["S::Stone"], "soldOut": ["XXL::Stone"] }
+    },
+    {
+      "id": "soft-knit-sweater",
+      "price": 14.9,
+      "active": true,
+      "details": ["نسيج ناعم وخفيف.", "مناسب للأجواء الباردة.", "غسيل بارد للحفاظ على الخامة."],
+      "stock": { "default": 4, "low": ["XL::Navy"], "soldOut": [] }
+    },
+    {
+      "id": "cotton-shorts",
+      "price": 7.5,
+      "active": true,
+      "details": ["قطن مريح.", "خصر مرن.", "قصة يومية سهلة التنسيق."],
+      "stock": { "default": 6, "low": ["XL::Off White"], "soldOut": ["S::Off White"] }
+    }
+  ]
+}

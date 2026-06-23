@@ -1,4 +1,7 @@
-const catalog = {
+import fs from "node:fs";
+import path from "node:path";
+
+const baseCatalog = {
   "minimal-jul-tee": { name: "Minimal JUL Tee", price: 4.9 },
   "sand-linen-blazer": { name: "Sand Linen Blazer", price: 24.5 },
   "oxford-shirt": { name: "Oxford Shirt", price: 9.75 },
@@ -6,6 +9,34 @@ const catalog = {
   "soft-knit-sweater": { name: "Soft Knit Sweater", price: 14.9 },
   "cotton-shorts": { name: "Cotton Shorts", price: 7.5 },
 };
+
+function catalogFromConfig() {
+  const catalog = { ...baseCatalog };
+
+  try {
+    const configPath = path.join(process.cwd(), "products.json");
+    const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    if (!Array.isArray(config.products)) return catalog;
+
+    config.products.forEach((item) => {
+      if (!item?.id || !catalog[item.id]) return;
+      if (item.active === false) {
+        delete catalog[item.id];
+        return;
+      }
+      const price = Number.parseFloat(item.price);
+      catalog[item.id] = {
+        ...catalog[item.id],
+        name: item.name || catalog[item.id].name,
+        price: Number.isFinite(price) && price > 0 ? price : catalog[item.id].price,
+      };
+    });
+  } catch {
+    return catalog;
+  }
+
+  return catalog;
+}
 
 function paymentMethodId(payment) {
   if (/visa|master/i.test(payment || "")) return 2;
@@ -30,6 +61,7 @@ function deliveryFee() {
 }
 
 function buildInvoice(order) {
+  const catalog = catalogFromConfig();
   const items = Array.isArray(order.items) ? order.items : [];
   let invoiceValue = 0;
   const invoiceItems = items.map((item) => {
