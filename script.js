@@ -881,8 +881,34 @@ checkoutForm.addEventListener("submit", async (event) => {
   }
 });
 
+function initHeroParallax() {
+  const hero = document.querySelector("[data-hero-parallax]");
+  if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  let ticking = false;
+
+  const update = () => {
+    const rect = hero.getBoundingClientRect();
+    const viewport = window.innerHeight || document.documentElement.clientHeight;
+    const progress = Math.max(-1, Math.min(1, (viewport / 2 - rect.top) / (viewport + rect.height)));
+    hero.style.setProperty("--hero-parallax", `${Math.round(progress * 26)}px`);
+    ticking = false;
+  };
+
+  const requestUpdate = () => {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  };
+
+  update();
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate);
+}
+
 async function initStore() {
   await loadProductConfig();
+  initHeroParallax();
   renderPaymentStatus();
   renderCategories();
   renderProducts();
