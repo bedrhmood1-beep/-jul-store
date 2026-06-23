@@ -29,6 +29,7 @@ function catalogFromConfig() {
         ...catalog[item.id],
         name: item.name || catalog[item.id].name,
         price: Number.isFinite(price) && price > 0 ? price : catalog[item.id].price,
+        stock: item.stock || catalog[item.id].stock,
       };
     });
   } catch {
@@ -60,6 +61,22 @@ function deliveryFee() {
   return Number.isFinite(value) && value >= 0 ? Number(value.toFixed(3)) : 1.5;
 }
 
+function stockKey(size, colorName) {
+  return `${size}::${colorName}`;
+}
+
+function availableStock(product, size, colorName) {
+  const rule = product.stock;
+  if (!rule) return Number.POSITIVE_INFINITY;
+
+  const key = stockKey(size, colorName);
+  if (Array.isArray(rule.soldOut) && rule.soldOut.includes(key)) return 0;
+  if (Array.isArray(rule.low) && rule.low.includes(key)) return 1;
+
+  const value = Number.parseInt(rule.default, 10);
+  return Number.isFinite(value) && value >= 0 ? value : Number.POSITIVE_INFINITY;
+}
+
 function buildInvoice(order) {
   const catalog = catalogFromConfig();
   const items = Array.isArray(order.items) ? order.items : [];
@@ -76,6 +93,10 @@ function buildInvoice(order) {
     const color = String(item.color || "").trim();
     if (!size || !color) {
       throw new Error("Size and color are required.");
+    }
+
+    if (quantity > availableStock(product, size, color)) {
+      throw new Error("Selected size and color are out of stock.");
     }
 
     invoiceValue += product.price * quantity;
