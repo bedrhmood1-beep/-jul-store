@@ -2,19 +2,18 @@ import fs from "node:fs";
 import path from "node:path";
 
 const baseCatalog = {
-  "beach-tee-men": { name: "Men Beach Tee", price: 5.25 },
-  "beach-shorts-men": { name: "Men Beach Shorts", price: 6.75 },
-  "beach-tee-women": { name: "Women Beach Tee", price: 5.25 },
-  "beach-shorts-women": { name: "Women Beach Shorts", price: 6.5 },
-  "summer-oversized-tee": { name: "Summer Oversized Tee", price: 5.9 },
-  "summer-shorts-men": { name: "Men Summer Shorts", price: 6.25 },
-  "rib-tank-top-women": { name: "Women Rib Tank Top", price: 4.25 },
-  "lounge-shorts-women": { name: "Women Lounge Shorts", price: 5.75 },
-  "washed-oversized-tee": { name: "Washed Oversized Tee", price: 6.9 },
-  "heavy-logo-hoodie": { name: "Heavy Logo Hoodie", price: 14.9 },
-  "timeless-logo-tee": { name: "Timeless Logo Tee", price: 5.9 },
-  "relaxed-logo-hoodie": { name: "Relaxed Logo Hoodie", price: 13.9 },
-  "half-zip-pullover": { name: "Half-Zip Pullover", price: 12.9 },
+  "tshirt-black": { name: "JUL T-Shirt Black", price: 5.25 },
+  "tshirt-white": { name: "JUL T-Shirt White", price: 5.25 },
+  "tshirt-taupe": { name: "JUL T-Shirt Taupe", price: 5.25 },
+  "tshirt-navy": { name: "JUL T-Shirt Navy", price: 5.25 },
+  "shorts-black": { name: "JUL Shorts Black", price: 6.5 },
+  "shorts-light-blue": { name: "JUL Shorts Light Blue", price: 6.5 },
+  "shorts-taupe": { name: "JUL Shorts Taupe", price: 6.5 },
+  "shorts-off-white": { name: "JUL Shorts Off White", price: 6.5 },
+  "hoodie-beige": { name: "JUL Hoodie Beige", price: 13.9 },
+  "hoodie-black-back": { name: "JUL Hoodie Black Back", price: 13.9 },
+  "half-zip-charcoal": { name: "JUL Half Zip Charcoal", price: 12.9 },
+  "tank-top-white": { name: "JUL Tank Top White", price: 4.25 },
 };
 
 function catalogFromConfig() {
