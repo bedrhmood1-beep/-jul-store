@@ -8,7 +8,7 @@
       name="description"
       content="JUL Modern Clothing متجر ملابس حديث في الكويت مع طلب ودفع إلكتروني داخل الموقع."
     />
-    <link rel="stylesheet" href="styles.css?v=jul-animated-hero-20260624" />
+    <link rel="stylesheet" href="styles.css?v=product-detail-20260624" />
   </head>
   <body>
     <header class="site-header">
@@ -92,6 +92,27 @@
           <h2>تسوق مجموعة JUL</h2>
         </div>
         <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <section class="product-detail-page" id="productDetail" hidden aria-label="تفاصيل المنتج">
+        <button class="product-detail-back" id="productDetailBack" type="button">رجوع للمجموعة</button>
+        <div class="product-detail-layout">
+          <div class="product-detail-media">
+            <img id="detailImage" src="" alt="" />
+          </div>
+          <div class="product-detail-info">
+            <p class="eyebrow" id="detailCategory"></p>
+            <h1 id="detailName"></h1>
+            <p class="product-detail-description" id="detailDescription"></p>
+            <ul class="product-detail-specs" id="detailSpecs"></ul>
+            <div class="swatches detail-swatches" id="detailSwatches" aria-label="خيارات المنتج"></div>
+            <div class="stock-status" id="detailStock" aria-live="polite"></div>
+            <div class="product-detail-footer">
+              <strong id="detailPrice"></strong>
+              <button class="primary-button" id="detailAddButton" type="button">Add to Cart</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="service-band" aria-label="مميزات الطلب">
@@ -319,6 +340,6 @@
       </article>
     </template>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=product-detail-20260624"></script>
   </body>
 </html>

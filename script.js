@@ -259,6 +259,20 @@ const checkoutForm = document.querySelector("#checkoutForm");
 const checkoutResult = document.querySelector("#checkoutResult");
 const checkoutButton = checkoutForm.querySelector('button[type="submit"]');
 const paymentStatus = document.querySelector("#paymentStatus");
+const productDetail = document.querySelector("#productDetail");
+const productDetailBack = document.querySelector("#productDetailBack");
+const detailImage = document.querySelector("#detailImage");
+const detailCategory = document.querySelector("#detailCategory");
+const detailName = document.querySelector("#detailName");
+const detailDescription = document.querySelector("#detailDescription");
+const detailSpecs = document.querySelector("#detailSpecs");
+const detailSwatches = document.querySelector("#detailSwatches");
+const detailStock = document.querySelector("#detailStock");
+const detailPrice = document.querySelector("#detailPrice");
+const detailAddButton = document.querySelector("#detailAddButton");
+
+let detailControls = null;
+let activeDetailProduct = null;
 
 function formatPrice(value) {
   return `${Number(value).toFixed(3)} د.ك`;
@@ -594,6 +608,110 @@ function createVariantControls(node, product, onColorChange) {
   };
 }
 
+function productRoute(id) {
+  return `#product/${encodeURIComponent(id)}`;
+}
+
+function productIdFromHash() {
+  const match = window.location.hash.match(/^#product\/(.+)$/);
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+function openProductDetail(id) {
+  const route = productRoute(id);
+  if (window.location.hash === route) {
+    renderProductDetail(id, true);
+    return;
+  }
+  window.location.hash = route;
+}
+
+function closeProductDetail() {
+  document.body.classList.remove("product-detail-open");
+  productDetail.hidden = true;
+  activeDetailProduct = null;
+  detailControls = null;
+  if (window.location.hash.startsWith("#product/")) {
+    window.location.hash = "products";
+  }
+}
+
+function renderProductDetail(id, shouldScroll = false) {
+  const product = products.find((item) => item.id === id);
+  if (!product) {
+    closeProductDetail();
+    return;
+  }
+
+  activeDetailProduct = product;
+  document.body.classList.add("product-detail-open");
+  productDetail.hidden = false;
+
+  detailImage.src = product.image || "";
+  detailImage.alt = product.name;
+  detailCategory.textContent = product.category;
+  detailName.textContent = product.name;
+  detailDescription.textContent = product.description;
+  detailPrice.textContent = formatPrice(product.price);
+  detailSpecs.innerHTML = productDetails(product)
+    .map((detail) => `<li>${detail}</li>`)
+    .join("");
+
+  detailSwatches.className = "swatches detail-swatches";
+  detailControls = createVariantControls(productDetail, product, (color) => {
+    detailImage.style.setProperty("--selected-color", color.hex);
+    detailImage.dataset.colorName = color.name;
+  });
+
+  const updateDetailAvailability = () => {
+    const options = detailControls.getOptions();
+    const stock = availableStock(product.id, options.size, options.colorName);
+    detailStock.className = "stock-status";
+
+    if (stock <= 0) {
+      detailStock.textContent = "غير متوفر بهذا اللون والمقاس";
+      detailStock.classList.add("sold-out");
+      detailAddButton.disabled = true;
+      detailAddButton.textContent = "Sold Out";
+      return;
+    }
+
+    detailAddButton.disabled = false;
+    detailAddButton.textContent = "Add to Cart";
+    if (stock <= 2) {
+      detailStock.textContent = `باقي ${stock} فقط`;
+      detailStock.classList.add("low");
+    } else {
+      detailStock.textContent = "متوفر للطلب";
+    }
+  };
+
+  detailAddButton.onclick = () => addToCart(product.id, detailControls.getOptions());
+  productDetail.querySelector(".size-select").addEventListener("change", updateDetailAvailability);
+  productDetail.querySelectorAll(".color-choice").forEach((button) => {
+    button.addEventListener("click", updateDetailAvailability);
+  });
+  updateDetailAvailability();
+
+  if (shouldScroll) {
+    productDetail.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+}
+
+function handleProductRoute() {
+  const id = productIdFromHash();
+  if (id) {
+    renderProductDetail(id);
+    return;
+  }
+  if (productDetail && !productDetail.hidden) {
+    document.body.classList.remove("product-detail-open");
+    productDetail.hidden = true;
+  }
+}
+
 function renderProducts() {
   productsGrid.innerHTML = "";
 
@@ -662,6 +780,19 @@ function renderProducts() {
     addButton.addEventListener("click", () => addToCart(product.id, controls.getOptions()));
     node.querySelector(".size-select").addEventListener("change", updateAvailability);
     node.querySelectorAll(".color-choice").forEach((button) => button.addEventListener("click", updateAvailability));
+    node.classList.add("is-clickable");
+    node.tabIndex = 0;
+    node.setAttribute("aria-label", `View details for ${product.name}`);
+    node.addEventListener("click", (event) => {
+      if (event.target.closest("button, select, input, label, .variant-panel")) return;
+      openProductDetail(product.id);
+    });
+    node.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      if (event.target !== node) return;
+      event.preventDefault();
+      openProductDetail(product.id);
+    });
     updateAvailability();
 
     productsGrid.append(node);
@@ -859,6 +990,9 @@ searchInput.addEventListener("input", (event) => {
   renderProducts();
 });
 
+productDetailBack.addEventListener("click", closeProductDetail);
+window.addEventListener("hashchange", handleProductRoute);
+
 checkoutForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!cart.size) {
@@ -913,6 +1047,7 @@ async function initStore() {
   renderCategories();
   renderProducts();
   renderCart();
+  handleProductRoute();
 }
 
 initStore();
