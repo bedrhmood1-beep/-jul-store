@@ -16,10 +16,16 @@
       .admin-form input, .admin-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 10px; color: var(--ink); }
       .admin-form textarea { min-height: 88px; resize: vertical; }
       .admin-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+      .admin-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+      .admin-metric { border: 1px solid rgba(20, 20, 18, .1); border-radius: 8px; background: var(--panel); padding: 14px; }
+      .admin-metric span { display: block; color: var(--muted); font-size: 12px; font-weight: 900; }
+      .admin-metric strong { color: var(--ink); font-size: 24px; }
+      .admin-last-order { display: grid; gap: 8px; color: var(--muted); }
+      .admin-last-order strong { color: var(--ink); }
       .admin-output { width: 100%; min-height: 260px; border: 1px solid var(--line); border-radius: 14px; padding: 14px; direction: ltr; text-align: left; font-family: Consolas, monospace; }
       .admin-note { color: var(--muted); line-height: 1.8; }
       .admin-head .secondary-button, .admin-actions .secondary-button { color: var(--navy); border-color: rgba(184, 138, 62, .32); background: var(--white); }
-      @media (max-width: 900px) { .admin-form { grid-template-columns: 1fr; } .admin-head { align-items: flex-start; flex-direction: column; } }
+      @media (max-width: 900px) { .admin-form, .admin-metrics { grid-template-columns: 1fr; } .admin-head { align-items: flex-start; flex-direction: column; } }
     </style>
   </head>
   <body>
@@ -36,7 +42,18 @@
       <div class="admin-actions">
         <button class="primary-button" id="downloadConfig" type="button">تحميل products.json</button>
         <button class="secondary-button" id="copyConfig" type="button">نسخ JSON</button>
+        <button class="secondary-button" id="downloadReport" type="button">تحميل تقرير المتجر</button>
       </div>
+
+      <section class="admin-card">
+        <h2>ملخص سريع</h2>
+        <div class="admin-metrics" id="adminMetrics"></div>
+      </section>
+
+      <section class="admin-card">
+        <h2>آخر طلب محفوظ على هذا الجهاز</h2>
+        <div class="admin-last-order" id="adminLastOrder"></div>
+      </section>
 
       <section class="admin-grid" id="adminProducts"></section>
 

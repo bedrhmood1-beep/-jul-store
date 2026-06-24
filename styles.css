@@ -1026,6 +1026,69 @@ h2 {
   background: #fff4f4;
 }
 
+.order-confirmation {
+  padding: 34px 5vw 8px;
+}
+
+.order-card {
+  max-width: 980px;
+  margin: 0 auto;
+  border: 1px solid rgba(20, 20, 18, 0.14);
+  border-radius: 6px;
+  background: var(--white);
+  padding: 28px;
+  box-shadow: 0 18px 42px rgba(20, 20, 18, 0.08);
+}
+
+.order-card h2 {
+  margin: 0 0 18px;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 5vw, 56px);
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.order-meta,
+.order-breakdown,
+.order-address {
+  display: grid;
+  gap: 6px;
+  border-top: 1px solid rgba(20, 20, 18, 0.1);
+  padding-top: 16px;
+}
+
+.order-meta span,
+.order-address span,
+.order-breakdown span {
+  color: var(--muted);
+}
+
+.order-items {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order-items li,
+.order-breakdown span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.order-items span {
+  color: var(--muted);
+}
+
+.order-card .secondary-button {
+  width: fit-content;
+  margin-top: 22px;
+}
+
 .checkout-result span {
   color: var(--muted);
 }
@@ -1162,6 +1225,20 @@ h2 {
   .primary-button,
   .secondary-button {
     width: 100%;
+  }
+
+  .order-confirmation {
+    padding-inline: 18px;
+  }
+
+  .order-card {
+    padding: 20px;
+  }
+
+  .order-items li,
+  .order-breakdown span {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .products-grid {

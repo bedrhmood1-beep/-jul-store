@@ -2,8 +2,19 @@ const adminProducts = document.querySelector("#adminProducts");
 const adminOutput = document.querySelector("#adminOutput");
 const downloadConfig = document.querySelector("#downloadConfig");
 const copyConfig = document.querySelector("#copyConfig");
+const downloadReport = document.querySelector("#downloadReport");
+const adminMetrics = document.querySelector("#adminMetrics");
+const adminLastOrder = document.querySelector("#adminLastOrder");
 
 let config = { products: [] };
+
+function readJson(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 function normalizeList(value) {
   return String(value || "")
@@ -14,6 +25,37 @@ function normalizeList(value) {
 
 function renderOutput() {
   adminOutput.value = JSON.stringify(config, null, 2);
+}
+
+function renderMetrics() {
+  const analytics = readJson("jul:analytics", {});
+  const lastOrder = readJson("jul:last-order", null);
+  const metricItems = [
+    ["الزيارات", analytics.visits || 0],
+    ["مشاهدات المنتجات", Object.values(analytics.productViews || {}).reduce((sum, value) => sum + value, 0)],
+    ["إضافات للسلة", Object.values(analytics.cartAdds || {}).reduce((sum, value) => sum + value, 0)],
+    ["محاولات الدفع", analytics.checkoutStarts || 0],
+  ];
+
+  adminMetrics.innerHTML = metricItems
+    .map(([label, value]) => `<div class="admin-metric"><span>${label}</span><strong>${value}</strong></div>`)
+    .join("");
+
+  if (!lastOrder) {
+    adminLastOrder.innerHTML = "<span>ماكو طلب محفوظ على هذا الجهاز حالياً.</span>";
+    return;
+  }
+
+  const items = (lastOrder.items || [])
+    .map((item) => `${item.name || item.id} (${item.size}/${item.color}) × ${item.quantity}`)
+    .join("، ");
+
+  adminLastOrder.innerHTML = `
+    <strong>${lastOrder.id}</strong>
+    <span>${lastOrder.customer || ""} - ${lastOrder.mobile || ""}</span>
+    <span>${items}</span>
+    <span>الإجمالي: ${Number(lastOrder.total || 0).toFixed(3)} د.ك</span>
+  `;
 }
 
 function updateProduct(id, patch) {
@@ -111,6 +153,23 @@ copyConfig.addEventListener("click", async () => {
   }, 1200);
 });
 
+downloadReport.addEventListener("click", () => {
+  const report = {
+    generatedAt: new Date().toISOString(),
+    analytics: readJson("jul:analytics", {}),
+    lastOrder: readJson("jul:last-order", null),
+  };
+  const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `jul-store-report-${Date.now()}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+});
+
 loadConfig().catch(() => {
   adminProducts.innerHTML = '<p class="empty-cart">تعذر تحميل products.json.</p>';
 });
+
+renderMetrics();

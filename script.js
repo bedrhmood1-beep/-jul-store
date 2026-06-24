@@ -1,6 +1,8 @@
 ﻿const merchantEmail = "bedrhmood1@gmail.com";
 const paymentEndpoint = "/api/create-payment";
 const deliveryFee = 1.5;
+const lastOrderKey = "jul:last-order";
+const analyticsKey = "jul:analytics";
 
 let products = [
   {
@@ -259,6 +261,7 @@ const checkoutForm = document.querySelector("#checkoutForm");
 const checkoutResult = document.querySelector("#checkoutResult");
 const checkoutButton = checkoutForm.querySelector('button[type="submit"]');
 const paymentStatus = document.querySelector("#paymentStatus");
+const orderConfirmation = document.querySelector("#orderConfirmation");
 const productDetail = document.querySelector("#productDetail");
 const productDetailBack = document.querySelector("#productDetailBack");
 const detailImage = document.querySelector("#detailImage");
@@ -273,6 +276,64 @@ const detailAddButton = document.querySelector("#detailAddButton");
 
 let detailControls = null;
 let activeDetailProduct = null;
+
+function readJson(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJson(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Private browsing can block storage; checkout must still work.
+  }
+}
+
+function trackEvent(type, details = {}) {
+  const analytics = readJson(analyticsKey, {
+    firstSeen: new Date().toISOString(),
+    lastSeen: "",
+    visits: 0,
+    productViews: {},
+    cartAdds: {},
+    checkoutStarts: 0,
+    paymentRedirects: 0,
+    paymentSuccesses: 0,
+    paymentFailures: 0,
+    events: [],
+  });
+
+  analytics.lastSeen = new Date().toISOString();
+  analytics.events = Array.isArray(analytics.events) ? analytics.events.slice(-60) : [];
+  analytics.events.push({ type, at: analytics.lastSeen, ...details });
+
+  if (type === "visit") analytics.visits += 1;
+  if (type === "product-view" && details.productId) {
+    analytics.productViews[details.productId] = (analytics.productViews[details.productId] || 0) + 1;
+  }
+  if (type === "cart-add" && details.productId) {
+    analytics.cartAdds[details.productId] = (analytics.cartAdds[details.productId] || 0) + 1;
+  }
+  if (type === "checkout-start") analytics.checkoutStarts += 1;
+  if (type === "payment-redirect") analytics.paymentRedirects += 1;
+  if (type === "payment-success") analytics.paymentSuccesses += 1;
+  if (type === "payment-failed") analytics.paymentFailures += 1;
+
+  writeJson(analyticsKey, analytics);
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 function formatPrice(value) {
   return `${Number(value).toFixed(3)} د.ك`;
@@ -518,11 +579,12 @@ function renderPaymentStatus() {
 
   paymentStatus.hidden = false;
   paymentStatus.className = `payment-status ${status === "success" ? "success" : "failed"}`;
+  trackEvent(status === "success" ? "payment-success" : "payment-failed", { orderId: order || "" });
 
   if (status === "success") {
     paymentStatus.innerHTML = `
-      <strong>تم الرجوع من بوابة الدفع</strong>
-      <span>إذا اكتملت عملية الدفع، راح يظهر الطلب في لوحة MyFatoorah. رقم الطلب: ${order || "غير متوفر"}</span>
+      <strong>تم استلام نتيجة الدفع</strong>
+      <span>إذا اكتملت العملية في MyFatoorah، راح يظهر الطلب في لوحة الدفع. رقم الطلب: ${order || "غير متوفر"}</span>
     `;
   } else {
     paymentStatus.innerHTML = `
@@ -530,6 +592,53 @@ function renderPaymentStatus() {
       <span>تقدر ترجع للسلة وتجرب مرة ثانية، أو تتواصل واتساب للاستفسار. رقم الطلب: ${order || "غير متوفر"}</span>
     `;
   }
+
+  renderOrderConfirmation(status, order);
+}
+
+function renderOrderConfirmation(status, orderId) {
+  if (!orderConfirmation) return;
+
+  const order = readJson(lastOrderKey, null);
+  if (!order || (orderId && order.id !== orderId)) {
+    orderConfirmation.hidden = true;
+    return;
+  }
+
+  const itemRows = (order.items || [])
+    .map(
+      (item) => `
+        <li>
+          <strong>${escapeHtml(item.name || item.id)}</strong>
+          <span>${escapeHtml(item.size)} / ${escapeHtml(item.color)} × ${item.quantity}</span>
+          <b>${formatPrice(item.lineTotal || item.price * item.quantity)}</b>
+        </li>
+      `
+    )
+    .join("");
+
+  orderConfirmation.hidden = false;
+  orderConfirmation.innerHTML = `
+    <div class="order-card ${status === "success" ? "success" : "failed"}">
+      <p class="eyebrow">Order Summary</p>
+      <h2>${status === "success" ? "ملخص طلبك" : "طلب غير مكتمل"}</h2>
+      <div class="order-meta">
+        <span>رقم الطلب</span>
+        <strong>${escapeHtml(order.id)}</strong>
+      </div>
+      <ul class="order-items">${itemRows}</ul>
+      <div class="order-breakdown">
+        <span>المنتجات <strong>${formatPrice(order.subtotal)}</strong></span>
+        <span>التوصيل <strong>${formatPrice(order.delivery)}</strong></span>
+        <span>الإجمالي <strong>${formatPrice(order.total)}</strong></span>
+      </div>
+      <div class="order-address">
+        <strong>العنوان</strong>
+        <span>${escapeHtml(order.address.area)}، قطعة ${escapeHtml(order.address.block)}، شارع ${escapeHtml(order.address.street)}، منزل ${escapeHtml(order.address.house)}${order.address.floor ? `، ${escapeHtml(order.address.floor)}` : ""}</span>
+      </div>
+      <a class="secondary-button" href="https://wa.me/96597827313?text=${encodeURIComponent(`استفسار عن الطلب ${order.id}`)}" target="_blank" rel="noreferrer">استفسار عن الطلب</a>
+    </div>
+  `;
 }
 
 function renderCategories() {
@@ -644,6 +753,7 @@ function renderProductDetail(id, shouldScroll = false) {
   }
 
   activeDetailProduct = product;
+  trackEvent("product-view", { productId: product.id, productName: product.name });
   document.body.classList.add("product-detail-open");
   productDetail.hidden = false;
 
@@ -830,6 +940,7 @@ function addToCart(id, options) {
   }
 
   renderCart();
+  trackEvent("cart-add", { productId: id, size: options.size, color: options.colorName });
   openCart();
 }
 
@@ -1002,11 +1113,15 @@ checkoutForm.addEventListener("submit", async (event) => {
 
   const formData = new FormData(checkoutForm);
   const order = buildOrder(formData);
+  writeJson(lastOrderKey, order);
+  trackEvent("checkout-start", { orderId: order.id, total: order.total });
   setCheckoutLoading(true);
   showPaymentState(order, "جاري تجهيز رابط الدفع من MyFatoorah...");
 
   try {
     const payment = await createPayment(order);
+    writeJson(lastOrderKey, { ...order, invoiceId: payment.invoiceId, paymentUrl: payment.paymentUrl });
+    trackEvent("payment-redirect", { orderId: order.id, invoiceId: payment.invoiceId });
     showPaymentState(order, "تم إنشاء رابط الدفع. جاري تحويلك الآن...");
     window.location.href = payment.paymentUrl;
   } catch (error) {
@@ -1041,6 +1156,7 @@ function initHeroParallax() {
 }
 
 async function initStore() {
+  trackEvent("visit", { path: window.location.pathname + window.location.search + window.location.hash });
   await loadProductConfig();
   initHeroParallax();
   renderPaymentStatus();
