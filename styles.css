@@ -1778,6 +1778,57 @@ h3 {
   color: #d8c9b3;
 }
 
+.site-footer {
+  display: grid;
+  grid-template-columns: 1fr auto 1.4fr;
+  gap: 24px;
+  align-items: center;
+  border-top: 1px solid rgba(20, 20, 18, 0.12);
+  background: var(--white);
+  padding: 28px 5vw;
+  color: var(--ink);
+}
+
+.site-footer div {
+  display: grid;
+  gap: 2px;
+}
+
+.site-footer strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.site-footer span,
+.site-footer p,
+.site-footer a {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+}
+
+.site-footer a {
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.site-footer a:hover {
+  color: var(--ink);
+}
+
+.site-footer p {
+  margin: 0;
+  line-height: 1.8;
+}
+
 .policy-section {
   background: var(--paper);
 }
@@ -1857,6 +1908,7 @@ h3 {
   .status-strip,
   .toolbar,
   .service-band,
+  .site-footer,
   .faq-grid,
   .policy-section {
     grid-template-columns: 1fr;
@@ -1875,6 +1927,10 @@ h3 {
 
   .section-head {
     display: block;
+  }
+
+  .site-footer {
+    text-align: center;
   }
 
   .section-head .eyebrow {

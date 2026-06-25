@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://jul-store.vercel.app/assets/jul-link-preview-logo.jpg" />
     <link rel="icon" href="assets/jul-link-preview-logo.jpg" type="image/jpeg" />
     <link rel="apple-touch-icon" href="assets/jul-link-preview-logo.jpg" />
-    <link rel="stylesheet" href="styles.css?v=store-ready-20260624" />
+    <link rel="stylesheet" href="styles.css?v=store-polish-20260625" />
   </head>
   <body>
     <header class="site-header">
@@ -34,7 +34,6 @@
         <a href="#products">Shop</a>
         <a href="#categories">Categories</a>
         <a href="#contact">Contact</a>
-        <a href="admin.html">Admin</a>
       </nav>
       <button class="icon-button cart-toggle" type="button" aria-label="فتح السلة">
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -254,32 +253,32 @@
         <div class="checkout-section-title">بيانات العميل</div>
         <label>
           الاسم
-          <input name="customer" required placeholder="اسم العميل" />
+          <input name="customer" required autocomplete="name" placeholder="اسم العميل" />
         </label>
         <label>
           رقم الهاتف
-          <input name="mobile" required inputmode="tel" placeholder="مثال: 97827313" />
+          <input name="mobile" required inputmode="tel" autocomplete="tel" pattern="[0-9]{8}" maxlength="8" placeholder="مثال: 97827313" />
         </label>
 
         <div class="checkout-section-title">عنوان التوصيل</div>
         <label>
           المنطقة
-          <input name="area" required placeholder="مثال: السالمية" />
+          <input name="area" required autocomplete="address-level2" placeholder="مثال: السالمية" />
         </label>
         <div class="address-grid">
           <label>
             القطعة
-            <input name="block" required placeholder="مثال: 4" />
+            <input name="block" required autocomplete="address-line1" placeholder="مثال: 4" />
           </label>
           <label>
             الشارع
-            <input name="street" required placeholder="مثال: شارع 12" />
+            <input name="street" required autocomplete="address-line2" placeholder="مثال: شارع 12" />
           </label>
         </div>
         <div class="address-grid">
           <label>
             المنزل
-            <input name="house" required placeholder="مثال: 25" />
+            <input name="house" required autocomplete="address-line3" placeholder="مثال: 25" />
           </label>
           <label>
             الدور / الشقة
@@ -328,6 +327,19 @@
     </aside>
     <div class="scrim" id="scrim"></div>
 
+    <footer class="site-footer">
+      <div>
+        <strong>JUL</strong>
+        <span>Modern Clothing Kuwait</span>
+      </div>
+      <nav aria-label="روابط المتجر">
+        <a href="#products">Shop</a>
+        <a href="#contact">Contact</a>
+        <a href="#top">Back to top</a>
+      </nav>
+      <p>دفع آمن عبر MyFatoorah عند التفعيل. استبدال خلال 15 يوم للقطع غير المستخدمة وبحالتها الأصلية.</p>
+    </footer>
+
     <template id="productTemplate">
       <article class="product-card">
         <div class="product-visual">
@@ -351,6 +363,6 @@
       </article>
     </template>
 
-    <script src="script.js?v=store-ready-20260624"></script>
+    <script src="script.js?v=store-polish-20260625"></script>
   </body>
 </html>

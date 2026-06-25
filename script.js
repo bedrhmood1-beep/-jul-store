@@ -3,6 +3,7 @@ const paymentEndpoint = "/api/create-payment";
 const deliveryFee = 1.5;
 const lastOrderKey = "jul:last-order";
 const analyticsKey = "jul:analytics";
+const cartStorageKey = "jul:cart";
 
 let products = [
   {
@@ -341,6 +342,40 @@ function formatPrice(value) {
 
 function variantKey(id, size, colorName) {
   return `${id}::${size}::${colorName}`;
+}
+
+function saveCart() {
+  writeJson(cartStorageKey, [...cart.values()]);
+}
+
+function restoreCart() {
+  const savedItems = readJson(cartStorageKey, []);
+  if (!Array.isArray(savedItems)) return;
+
+  savedItems.forEach((item) => {
+    if (!item?.id || !item?.size || !item?.color) return;
+    const product = products.find((entry) => entry.id === item.id);
+    if (!product) return;
+
+    const stock = availableStock(item.id, item.size, item.color);
+    const quantity = Math.min(Number.parseInt(item.quantity, 10) || 0, stock);
+    if (quantity <= 0) return;
+
+    const key = variantKey(item.id, item.size, item.color);
+    cart.set(key, {
+      key,
+      id: item.id,
+      size: item.size,
+      color: item.color,
+      colorHex: item.colorHex || product.colors.find((color) => color.name === item.color)?.hex || product.colors[0]?.hex || "#111111",
+      quantity,
+    });
+  });
+}
+
+function cleanKuwaitMobile(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  return digits.startsWith("965") && digits.length > 8 ? digits.slice(-8) : digits;
 }
 
 function hexToRgb(hex) {
@@ -939,6 +974,7 @@ function addToCart(id, options) {
     });
   }
 
+  saveCart();
   renderCart();
   trackEvent("cart-add", { productId: id, size: options.size, color: options.colorName });
   openCart();
@@ -956,6 +992,7 @@ function changeQuantity(key, delta) {
     cart.delete(key);
   }
 
+  saveCart();
   renderCart();
 }
 
@@ -1038,11 +1075,13 @@ function closeCart() {
 
 function buildOrder(formData) {
   const { items, subtotal, delivery, total } = cartTotals();
+  const mobile = cleanKuwaitMobile(formData.get("mobile"));
+
   return {
     id: `JUL-${Date.now().toString().slice(-6)}`,
     date: new Date().toISOString(),
     customer: formData.get("customer"),
-    mobile: formData.get("mobile"),
+    mobile,
     address: {
       area: formData.get("area"),
       block: formData.get("block"),
@@ -1113,6 +1152,12 @@ checkoutForm.addEventListener("submit", async (event) => {
 
   const formData = new FormData(checkoutForm);
   const order = buildOrder(formData);
+  if (!/^\d{8}$/.test(order.mobile)) {
+    showPaymentState(order, "رقم الهاتف لازم يكون 8 أرقام كويتية.");
+    checkoutForm.querySelector('[name="mobile"]').focus();
+    return;
+  }
+
   writeJson(lastOrderKey, order);
   trackEvent("checkout-start", { orderId: order.id, total: order.total });
   setCheckoutLoading(true);
@@ -1162,6 +1207,7 @@ async function initStore() {
   renderPaymentStatus();
   renderCategories();
   renderProducts();
+  restoreCart();
   renderCart();
   handleProductRoute();
 }
