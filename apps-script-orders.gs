@@ -21,23 +21,18 @@ function doPost(e) {
       "subtotal",
       "delivery",
       "total",
-      "payment_method",
-      "myfatoorah_invoice",
-      "payment_link",
       "status",
+      "notes",
     ]);
   }
 
+  const address = order.address || {};
   const items = (order.items || [])
     .map((item) => {
       const variant = `Size ${item.size || "-"} / ${item.color || "-"}`;
       return `${item.name} (${variant}) x ${item.quantity} = ${Number(item.lineTotal || 0).toFixed(3)} KWD`;
     })
     .join("\n");
-
-  const myfatoorah = order.myfatoorah || {};
-  const paymentMethod = order.paymentMethod || order.payment || "";
-  const address = order.address || {};
 
   sheet.appendRow([
     order.id,
@@ -51,12 +46,10 @@ function doPost(e) {
     address.floor,
     items,
     Number(order.subtotal || 0).toFixed(3),
-    Number(order.delivery || myfatoorah.delivery || 0).toFixed(3),
-    Number(order.total || myfatoorah.total || 0).toFixed(3),
-    paymentMethod,
-    myfatoorah.invoiceId || "",
-    myfatoorah.paymentUrl || "",
-    "payment_link_created",
+    Number(order.delivery || 0).toFixed(3),
+    Number(order.total || 0).toFixed(3),
+    order.status || "received",
+    order.notes || "",
   ]);
 
   MailApp.sendEmail({
@@ -69,13 +62,11 @@ function doPost(e) {
         <p><b>الاسم:</b> ${order.customer}</p>
         <p><b>الهاتف:</b> ${order.mobile}</p>
         <p><b>العنوان:</b> ${address.area || ""}، قطعة ${address.block || ""}، ${address.street || ""}، منزل ${address.house || ""} ${address.floor ? "، " + address.floor : ""}</p>
-        <p><b>طريقة الدفع:</b> ${paymentMethod}</p>
         <p><b>ملاحظات:</b> ${order.notes || "لا يوجد"}</p>
         <h3>المنتجات</h3>
         <pre style="font-family:Arial,sans-serif">${items}</pre>
-        <p><b>التوصيل:</b> ${Number(order.delivery || myfatoorah.delivery || 0).toFixed(3)} د.ك</p>
-        <h3>الإجمالي: ${Number(order.total || myfatoorah.total || 0).toFixed(3)} د.ك</h3>
-        <p><b>فاتورة MyFatoorah:</b> ${myfatoorah.invoiceId || ""}</p>
+        <p><b>التوصيل:</b> ${Number(order.delivery || 0).toFixed(3)} د.ك</p>
+        <h3>الإجمالي: ${Number(order.total || 0).toFixed(3)} د.ك</h3>
       </div>
     `,
   });

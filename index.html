@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://jul-store.vercel.app/assets/jul-link-preview-logo.jpg" />
     <link rel="icon" href="assets/jul-link-preview-logo.jpg" type="image/jpeg" />
     <link rel="apple-touch-icon" href="assets/jul-link-preview-logo.jpg" />
-    <link rel="stylesheet" href="styles.css?v=store-polish-20260625" />
+    <link rel="stylesheet" href="styles.css?v=no-payment-provider-20260625" />
   </head>
   <body>
     <header class="site-header">
@@ -46,7 +46,7 @@
     </header>
 
     <main id="top">
-      <section class="payment-status" id="paymentStatus" hidden></section>
+      <section class="order-status" id="orderStatus" hidden></section>
       <section class="order-confirmation" id="orderConfirmation" hidden aria-label="تأكيد الطلب"></section>
 
       <section class="hero animated-hero" aria-label="JUL landing banner" data-hero-parallax>
@@ -80,8 +80,8 @@
           <span>قطع رجالية ونسائية يومية</span>
         </div>
         <div>
-          <strong>Secure Payment</strong>
-          <span>دفع إلكتروني داخل الموقع</span>
+          <strong>Order Review</strong>
+          <span>إرسال الطلب مع العنوان كامل</span>
         </div>
       </section>
 
@@ -128,15 +128,15 @@
       <section class="service-band" aria-label="مميزات الطلب">
         <div>
           <strong>اختيار واضح</strong>
-          <span>المقاس واللون ينحفظون مع الطلب والفاتورة.</span>
+          <span>المقاس واللون ينحفظون مع الطلب.</span>
         </div>
         <div>
           <strong>توصيل الكويت</strong>
           <span>رسوم ثابتة 1.500 د.ك تضاف تلقائياً.</span>
         </div>
         <div>
-          <strong>دفع آمن</strong>
-          <span>الدفع يتم عبر MyFatoorah/KNET عند تفعيل الحساب.</span>
+          <strong>طلب مباشر</strong>
+          <span>أرسل الطلب من الموقع وتواصلنا يكون للتأكيد فقط.</span>
         </div>
       </section>
 
@@ -201,12 +201,12 @@
         <div>
           <p class="eyebrow">Delivery</p>
           <h2>توصيل داخل الكويت</h2>
-          <p>رسوم التوصيل 1.500 د.ك وتضاف تلقائياً على الطلب. يتم التواصل مع العميل لتأكيد وقت التوصيل بعد الدفع.</p>
+          <p>رسوم التوصيل 1.500 د.ك وتضاف تلقائياً على الطلب. يتم التواصل مع العميل لتأكيد وقت التوصيل بعد إرسال الطلب.</p>
         </div>
         <div>
           <p class="eyebrow">Exchange</p>
           <h2>استبدال خلال 15 يوم</h2>
-          <p>الاستبدال متاح إذا القطعة غير مستخدمة وبحالتها الأصلية. المقاسات والألوان المختارة تظهر في الفاتورة.</p>
+          <p>الاستبدال متاح إذا القطعة غير مستخدمة وبحالتها الأصلية. المقاسات والألوان المختارة تحفظ مع الطلب.</p>
         </div>
       </section>
 
@@ -218,19 +218,19 @@
         <div class="faq-grid">
           <details open>
             <summary>متى يوصل الطلب؟</summary>
-            <p>التوصيل داخل الكويت يتم بعد تأكيد الدفع وتحديد الوقت المناسب مع العميل.</p>
+            <p>التوصيل داخل الكويت يتم بعد تأكيد الطلب وتحديد الوقت المناسب مع العميل.</p>
           </details>
           <details>
             <summary>هل أقدر أبدل المقاس؟</summary>
             <p>نعم، الاستبدال خلال 15 يوم إذا القطعة بحالتها الأصلية وغير مستخدمة.</p>
           </details>
           <details>
-            <summary>هل الدفع داخل الموقع؟</summary>
-            <p>نعم، عند تفعيل حساب MyFatoorah Live يتم الدفع مباشرة عبر KNET أو البطاقة.</p>
+            <summary>شلون أطلب؟</summary>
+            <p>اختار القطع والمقاس واللون، أضفها للسلة، واكتب عنوانك كامل. بعدها أرسل الطلب من الموقع.</p>
           </details>
           <details>
             <summary>شلون أعرف طلبي وصل؟</summary>
-            <p>بعد الدفع يرجعك الموقع لرسالة تأكيد، وتقدر تراجع الطلب من لوحة MyFatoorah.</p>
+            <p>بعد إرسال الطلب تظهر لك رسالة تأكيد ورقم طلب، ونستخدم الرقم للمراجعة عند الحاجة.</p>
           </details>
         </div>
       </section>
@@ -240,7 +240,7 @@
       <div class="cart-header">
         <div>
           <p class="eyebrow">Checkout</p>
-          <h2>السلة والدفع</h2>
+          <h2>السلة والطلب</h2>
         </div>
         <button class="icon-button cart-close" type="button" aria-label="إغلاق السلة">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -290,22 +290,8 @@
           <textarea name="notes" rows="3" placeholder="المقاس، اللون، وقت التوصيل"></textarea>
         </label>
 
-        <div class="checkout-section-title">طريقة الدفع</div>
-        <div class="payment-methods" role="radiogroup" aria-label="طريقة الدفع">
-          <label class="payment-option">
-            <input type="radio" name="payment" value="KNET" checked />
-            <span>KNET</span>
-          </label>
-          <label class="payment-option">
-            <input type="radio" name="payment" value="Visa / MasterCard" />
-            <span>Visa / MasterCard</span>
-          </label>
-          <label class="payment-option">
-            <input type="radio" name="payment" value="Apple Pay" />
-            <span>Apple Pay</span>
-          </label>
-        </div>
-        <p class="payment-note">الدفع يتم عبر بوابة دفع آمنة. لا يتم حفظ بيانات البطاقة داخل الموقع.</p>
+        <div class="checkout-section-title">مراجعة الطلب</div>
+        <p class="order-note">بعد إرسال الطلب يظهر لك رقم الطلب لمراجعة التفاصيل.</p>
 
         <div class="cart-breakdown">
           <div>
@@ -321,7 +307,7 @@
           <span>الإجمالي</span>
           <strong id="cartTotal">0.000 د.ك</strong>
         </div>
-        <button class="primary-button full" type="submit">متابعة للدفع</button>
+        <button class="primary-button full" type="submit">إرسال الطلب</button>
         <div class="checkout-result" id="checkoutResult" hidden></div>
       </form>
     </aside>
@@ -337,7 +323,7 @@
         <a href="#contact">Contact</a>
         <a href="#top">Back to top</a>
       </nav>
-      <p>دفع آمن عبر MyFatoorah عند التفعيل. استبدال خلال 15 يوم للقطع غير المستخدمة وبحالتها الأصلية.</p>
+      <p>استبدال خلال 15 يوم للقطع غير المستخدمة وبحالتها الأصلية. بيانات الطلب تحفظ للمراجعة والتأكيد.</p>
     </footer>
 
     <template id="productTemplate">
@@ -363,6 +349,6 @@
       </article>
     </template>
 
-    <script src="script.js?v=store-polish-20260625"></script>
+    <script src="script.js?v=no-payment-provider-20260625"></script>
   </body>
 </html>

@@ -34,7 +34,7 @@ function renderMetrics() {
     ["الزيارات", analytics.visits || 0],
     ["مشاهدات المنتجات", Object.values(analytics.productViews || {}).reduce((sum, value) => sum + value, 0)],
     ["إضافات للسلة", Object.values(analytics.cartAdds || {}).reduce((sum, value) => sum + value, 0)],
-    ["محاولات الدفع", analytics.checkoutStarts || 0],
+    ["محاولات إرسال الطلب", analytics.orderSubmits || analytics.checkoutStarts || 0],
   ];
 
   adminMetrics.innerHTML = metricItems
